@@ -236,7 +236,6 @@ async function fetchKo(bk,ch){
 async function fetchEsv(bk,ch){
   const tok=esvKey.startsWith('Token ')?esvKey:'Token '+esvKey;
   const q=encodeURIComponent(bk.en+' '+ch);
-  // Use text endpoint with include-verse-numbers — gives [1] per verse clearly
   const url='https://api.esv.org/v3/passage/text/?q='+q
     +'&include-headings=true&include-footnotes=true&include-verse-numbers=true'
     +'&include-short-copyright=false&include-passage-references=false'
@@ -248,51 +247,56 @@ async function fetchEsv(bk,ch){
   const d=await r.json();
   if(!d.passages||!d.passages[0]) throw new Error('No ESV data');
 
-  const txt=d.passages[0];
+  const txt = d.passages[0];
   const verses={}, headings={}, footnotes={};
 
-  // Split footnotes from passage (footnotes appear as lines starting with (N))
-  const fnIdx=txt.search(/\n\(\d+\)/);
-  const passageTxt=fnIdx>-1?txt.slice(0,fnIdx):txt;
-  const fnTxt=fnIdx>-1?txt.slice(fnIdx):'';
-
-  // Parse footnotes
-  const fnRe=/\((\d+)\)\s*([^\n(]+)/g;
-  let fmatch;
-  while((fmatch=fnRe.exec(fnTxt))!==null) footnotes[fmatch[1]]=fmatch[2].trim();
-
-  // Collect heading lines separately, tag them
-  const rawLines=passageTxt.split('\n');
-  const taggedParts=[];
-  for(const raw of rawLines){
-    const l=raw.trim(); if(!l) continue;
-    if(/^\[\d/.test(l)||l.includes('[')) taggedParts.push(l);
-    else if(!/^\d+$/.test(l)) taggedParts.push('__HEAD__'+l);
+  // 1. Split off footnotes — they appear after passage as "(1) text" lines
+  const fnSplit = txt.split(/\n(?=\(\d+\))/);
+  const passageTxt = fnSplit[0];
+  for(let i=1; i<fnSplit.length; i++){
+    const fm = fnSplit[i].match(/^\((\d+)\)\s*([\s\S]+)/);
+    if(fm) footnotes[fm[1]] = fm[2].replace(/\n/g,' ').trim();
   }
 
-  // Split entire content on [N] markers — handles inline verse numbers in paragraphs
-  const joined=taggedParts.join(' ');
-  const parts=joined.split(/(?=\[\d+\])/);
+  // 2. Split on [N] verse markers — they appear inline within paragraphs
+  //    e.g. "[1] text text [2] more text [3] more"
+  //    We also need to capture headings which appear on their own lines BEFORE verses
+  let pendingHead = null;
+  const lines = passageTxt.split('\n');
+
+  // Collect lines, tagging headings
+  const tagged = [];
+  for(const raw of lines){
+    const l = raw.trim();
+    if(!l) continue;
+    if(/^\[\d+\]/.test(l) || l.includes('[')) tagged.push(l);
+    else if(!/^\d+$/.test(l)) tagged.push('\x00HEAD\x00'+l);
+  }
+
+  // Join and split on [N] markers anywhere
+  const full = tagged.join(' ');
+  const parts = full.split(/(?=\[\d+\])/);
 
   for(const part of parts){
-    const p=part.trim(); if(!p) continue;
-    const hm=[...p.matchAll(/__HEAD__([^[_]+)/g)];
-    const clean=p.replace(/__HEAD__[^[_]*/g,'').trim();
-    const vm=clean.match(/^\[(\d+)\]\s*([\s\S]*)/);
+    const p = part.trim(); if(!p) continue;
+    // Extract any heading embedded before this verse
+    const headMatch = p.match(/\x00HEAD\x00([^\x00[]*)/);
+    const clean = p.replace(/\x00HEAD\x00[^\x00[]*/g,'').trim();
+    const vm = clean.match(/^\[(\d+)\]\s*([\s\S]*)/);
     if(vm){
-      const num=+vm[1];
-      if(hm.length) headings[num]=hm[0][1].trim();
-      verses[num]=vm[2].replace(/\s+/g,' ').trim();
+      const num = +vm[1];
+      if(headMatch) headings[num] = headMatch[1].trim();
+      verses[num] = vm[2].replace(/\s+/g,' ').trim();
     }
   }
   return {verses, headings, footnotes};
 }
 
 function render(koVerses, esvData, bk, ch){
-  const {verses:en, headings, footnotes}=esvData;
-  let h='';
+  const {verses:en, headings, footnotes} = esvData;
+  let h = '';
 
-  // Sticky headers
+  // Sticky column headers
   h+=`<div class="col-headers">
     <div class="col-hdr"><span class="clbl">개역개정판</span><span class="cref">${bk.ko} ${ch}장</span></div>
     <div class="col-hdr"><span class="clbl">ESV</span><span class="cref">${bk.en} ${ch}</span></div>
@@ -304,12 +308,12 @@ function render(koVerses, esvData, bk, ch){
     <div class="en-side"><div class="ch-title">${bk.en} ${ch}</div></div>
   </div>`;
 
-  // Verse rows
+  // Verse rows — one grid row per verse number
   koVerses.forEach(kv=>{
-    const num=kv.verse;
-    const enRaw=en[num]||'';
+    const num = kv.verse;
+    const enRaw = en[num] || '';
 
-    // Section heading before this verse (English side only)
+    // Section heading — English side only
     if(headings[num]){
       h+=`<div class="shead-row">
         <div class="ko-side"></div>
@@ -317,8 +321,8 @@ function render(koVerses, esvData, bk, ch){
       </div>`;
     }
 
-    // Replace footnote refs (n) with superscripts
-    const enHtml=enRaw.replace(/\((\d+)\)/g,(_,n)=>`<sup class="fn-ref">${n}</sup>`);
+    // Inline footnote refs → superscripts
+    const enHtml = enRaw.replace(/\((\d+)\)/g, (_,n)=>`<sup class="fn-ref">${n}</sup>`);
 
     h+=`<div class="verse-row">
       <div class="verse-cell ko-side"><span class="vn">${num}</span><span class="vt" style="font-size:${fs}px">${esc(kv.text)}</span></div>
@@ -327,16 +331,17 @@ function render(koVerses, esvData, bk, ch){
   });
 
   // Footnotes — English side only
-  const fnKeys=Object.keys(footnotes).sort((a,b)=>+a-+b);
+  const fnKeys = Object.keys(footnotes).sort((a,b)=>+a-+b);
   if(fnKeys.length){
-    let fnHtml='<div class="footnotes"><div class="fn-title">Footnotes</div>';
-    fnKeys.forEach(k=>{fnHtml+=`<div class="fn-item"><span class="fn-n">${k}</span><span>${esc(footnotes[k])}</span></div>`;});
-    fnHtml+='</div>';
-    h+='<div class="fn-row"><div class="ko-side"></div><div class="en-side">'+fnHtml+'</div></div>';
+    let fnHtml = `<div class="footnotes"><div class="fn-title">Footnotes</div>`;
+    fnKeys.forEach(k=>{ fnHtml+=`<div class="fn-item"><span class="fn-n">${k}</span><span>${esc(footnotes[k])}</span></div>`; });
+    fnHtml += '</div>';
+    h += `<div class="fn-row"><div class="ko-side"></div><div class="en-side">${fnHtml}</div></div>`;
   }
 
-  document.getElementById('content').innerHTML=h;
+  document.getElementById('content').innerHTML = h;
 }
+
 
 function esc(s){return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
 document.addEventListener('keydown',e=>{
