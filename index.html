@@ -4,27 +4,27 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>개역개정 · ESV</title>
-<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500&family=Inter:wght@300;400;500&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500&display=swap" rel="stylesheet">
 <style>
 * { box-sizing: border-box; margin: 0; padding: 0; }
 html, body { height: 100%; }
 body {
-  font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
-  background: #fff; color: #111;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+  background: #f9f8f6; color: #111;
   display: flex; flex-direction: column; height: 100%;
   -webkit-font-smoothing: antialiased;
 }
 header {
-  height: 48px; border-bottom: 1px solid #f0f0f0;
+  height: 48px; border-bottom: 1px solid #ebe9e4;
   padding: 0 20px; display: flex; align-items: center;
-  justify-content: space-between; flex-shrink: 0;
+  justify-content: space-between; flex-shrink: 0; background: #f9f8f6;
 }
 .logo { display: flex; align-items: center; gap: 8px; font-size: 13px; font-weight: 500; color: #111; letter-spacing: -0.01em; }
 .logo-div { color: #ccc; font-weight: 300; }
 .logo-en { color: #888; font-weight: 400; }
 
 #esv-banner {
-  background: #fafafa; border-bottom: 1px solid #f0f0f0;
+  background: #f0ede8; border-bottom: 1px solid #ebe9e4;
   padding: 10px 20px; display: none; align-items: center;
   gap: 10px; flex-shrink: 0; flex-wrap: wrap;
   font-size: 12px; color: #666;
@@ -33,28 +33,28 @@ header {
 #esv-banner a { color: #2563eb; text-decoration: none; }
 #esv-banner a:hover { text-decoration: underline; }
 #esv-banner input {
-  border: 1px solid #e5e5e5; border-radius: 6px;
+  border: 1px solid #dedad4; border-radius: 6px;
   font: 12px 'Courier New', monospace; padding: 5px 10px;
   outline: none; width: 260px; max-width: 100%;
-  transition: border-color 0.15s; background: #fff;
+  transition: border-color 0.15s; background: #f9f8f6;
 }
 #esv-banner input:focus { border-color: #2563eb; }
 #esv-banner .save-btn {
   background: #111; border: none; border-radius: 6px;
-  color: #fff; cursor: pointer; font: 12px 'Inter', sans-serif;
+  color: #fff; cursor: pointer; font: 12px inherit;
   padding: 5px 14px;
 }
 
 nav {
-  height: 44px; border-bottom: 1px solid #f0f0f0;
+  height: 44px; border-bottom: 1px solid #ebe9e4;
   padding: 0 20px; display: flex; align-items: center;
-  gap: 6px; flex-shrink: 0; flex-wrap: wrap;
+  gap: 6px; flex-shrink: 0; flex-wrap: wrap; background: #f9f8f6;
 }
 .nl { font-size: 11px; color: #bbb; }
 select {
-  appearance: none; background: #fff; border: 1px solid #e5e5e5;
+  appearance: none; background: #f9f8f6; border: 1px solid #e5e5e5;
   border-radius: 6px; color: #111; cursor: pointer;
-  font: 13px 'Inter', sans-serif; padding: 5px 26px 5px 10px;
+  font: 13px inherit; padding: 5px 26px 5px 10px;
   background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6'%3E%3Cpath fill='%23aaa' d='M0 0l5 6 5-6z'/%3E%3C/svg%3E");
   background-repeat: no-repeat; background-position: right 8px center;
   outline: none; transition: border-color 0.15s;
@@ -63,57 +63,51 @@ select:focus { border-color: #111; }
 #bk { min-width: 180px; } #ch { min-width: 64px; }
 .btn-read {
   background: #111; border: none; border-radius: 6px;
-  color: #fff; cursor: pointer; font: 13px/1 'Inter', sans-serif;
+  color: #fff; cursor: pointer; font: 13px/1 inherit;
   font-weight: 500; padding: 6px 18px; letter-spacing: -0.01em;
 }
 .btn-read:hover { opacity: 0.75; }
 .btn-read:disabled { opacity: 0.3; cursor: not-allowed; }
 .btn-nav {
-  background: #fff; border: 1px solid #e5e5e5; border-radius: 6px;
+  background: #f9f8f6; border: 1px solid #e5e5e5; border-radius: 6px;
   color: #666; cursor: pointer; font-size: 14px;
   padding: 5px 11px; line-height: 1; transition: background 0.1s;
 }
-.btn-nav:hover { background: #f5f5f5; }
+.btn-nav:hover { background: #e8e4de; }
 .btn-nav:disabled { opacity: 0.3; cursor: not-allowed; }
 .fctl { margin-left: auto; display: flex; align-items: center; gap: 3px; }
 .fctl > span { font-size: 11px; color: #bbb; margin-right: 2px; }
 .fbtn {
-  background: #fff; border: 1px solid #e5e5e5; border-radius: 5px;
+  background: #f9f8f6; border: 1px solid #e5e5e5; border-radius: 5px;
   color: #888; cursor: pointer; font-size: 11px;
   width: 24px; height: 24px; display: flex;
   align-items: center; justify-content: center;
 }
-.fbtn:hover { background: #f5f5f5; }
+.fbtn:hover { background: #e8e4de; }
 
-main { flex: 1; display: flex; overflow: hidden; min-height: 0; }
-
-/* Single scroll container */
-.scroll-wrap {
-  flex: 1; overflow-y: auto; display: flex;
-}
-.scroll-wrap::-webkit-scrollbar { width: 3px; }
-.scroll-wrap::-webkit-scrollbar-thumb { background: #f0f0f0; border-radius: 3px; }
-
-.col { flex: 1; padding: 32px 28px 48px; min-width: 0; }
-.col.ko { border-right: 1px solid #f0f0f0; }
+main { flex: 1; overflow-y: auto; display: flex; align-items: flex-start; min-height: 0; }
+main::-webkit-scrollbar { width: 3px; }
+main::-webkit-scrollbar-thumb { background: #dedad4; border-radius: 3px; }
+.col { flex: 1; padding: 32px 28px 48px; min-width: 0; background: #f9f8f6; }
+.col.ko { border-right: 1px solid #ebe9e4; }
 
 .col-hdr {
   display: flex; align-items: center; justify-content: space-between;
-  margin-bottom: 24px; padding-bottom: 12px; border-bottom: 1px solid #f0f0f0;
+  margin-bottom: 24px; padding-bottom: 12px; border-bottom: 1px solid #ebe9e4;
 }
 .clbl { font-size: 11px; font-weight: 500; letter-spacing: 0.05em; text-transform: uppercase; color: #bbb; }
 .cref { font-size: 12px; color: #999; }
 
 .ch-title { font-size: 18px; font-weight: 500; color: #111; margin-bottom: 24px; letter-spacing: -0.02em; }
-.col.ko .ch-title { font-family: 'Noto Sans KR', sans-serif; }
+.col.ko .ch-title { font-family: 'Noto Sans KR', sans-serif; font-weight: 500; letter-spacing: -0.03em; }
 
 .shead { font-size: 10px; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; color: #ccc; margin: 24px 0 8px; }
 .verse { display: flex; gap: 12px; padding: 4px 0; border-radius: 4px; transition: background 0.1s; }
-.verse:hover { background: #fafafa; margin: 0 -8px; padding: 4px 8px; }
+.verse:hover { background: #f0ede8; margin: 0 -8px; padding: 4px 8px; }
 .vn { color: #ddd; font-size: 10px; font-weight: 500; min-width: 18px; text-align: right; padding-top: 5px; flex-shrink: 0; font-variant-numeric: tabular-nums; }
 .vt { line-height: 1.85; flex: 1; color: #1a1a1a; }
-.col.ko .vt { font-family: 'Noto Sans KR', sans-serif; font-size: 15px; font-weight: 300; word-break: keep-all; }
-.col.en .vt { font-size: 15px; font-weight: 300; }
+.col.ko .vt { font-family: 'Noto Sans KR', sans-serif; font-size: var(--fs); font-weight: 400; word-break: keep-all; }
+.col.en .vt { font-size: var(--fs); font-weight: 400; }
 
 .ph { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 8px; padding: 72px 20px; color: #bbb; text-align: center; }
 .ph p { font-size: 13px; line-height: 1.6; }
@@ -124,7 +118,7 @@ main { flex: 1; display: flex; overflow: hidden; min-height: 0; }
 .ldg-txt { font-size: 12px; color: #bbb; }
 .errbox { background: #fff5f5; border: 1px solid #fecaca; border-radius: 6px; color: #dc2626; padding: 10px 14px; font-size: 13px; line-height: 1.5; margin: 8px 0; }
 
-footer { border-top: 1px solid #f0f0f0; color: #ccc; font-size: 10px; padding: 8px 20px; text-align: center; flex-shrink: 0; }
+footer { border-top: 1px solid #ebe9e4; color: #bbb; background: #f9f8f6; font-size: 10px; padding: 8px 20px; text-align: center; flex-shrink: 0; }
 
 @media (max-width: 640px) {
   .scroll-wrap { flex-direction: column; }
@@ -166,22 +160,20 @@ footer { border-top: 1px solid #f0f0f0; color: #ccc; font-size: 10px; padding: 8
 </nav>
 
 <main>
-  <div class="scroll-wrap" id="scroll-wrap">
-    <div class="col ko" id="cko">
+  <div class="col ko" id="cko">
       <div class="col-hdr">
         <span class="clbl">개역개정판</span>
         <span class="cref" id="rko"></span>
       </div>
       <div id="tko"><div class="ph"><p>책과 장을 선택하고 Read를 누르세요</p></div></div>
     </div>
-    <div class="col en" id="cen">
+  <div class="col en" id="cen">
       <div class="col-hdr">
         <span class="clbl">ESV</span>
         <span class="cref" id="ren"></span>
       </div>
       <div id="ten"><div class="ph"><p>Select a passage and press Read</p></div></div>
     </div>
-  </div>
 </main>
 
 <footer>개역개정판 © 대한성서공회 &nbsp;·&nbsp; ESV® © 2001 Crossway · Used by permission</footer>
@@ -272,7 +264,7 @@ async function load(){
   document.getElementById('bload').disabled=false;
   if(kr.status==='fulfilled') renderKo(kr.value,bk,ci); else setErr('tko',kr.reason?.message||'실패');
   if(er.status==='fulfilled') renderEsv(er.value,bk,ci); else setErr('ten',er.reason?.message||'Failed');
-  document.getElementById('scroll-wrap').scrollTop=0;
+  document.querySelector('main').scrollTop=0;
 }
 
 async function fetchKo(bk,ch){
@@ -296,8 +288,7 @@ async function fetchEsv(bk,ch){
   // Use include-verse-numbers=true and let the API strip footnotes completely
   const url=`https://api.esv.org/v3/passage/text/?q=${q}`
     +`&include-headings=true`
-    +`&include-footnotes=false`
-    +`&include-footnote-body=false`
+    +`&include-footnotes=true`
     +`&include-verse-numbers=true`
     +`&include-short-copyright=false`
     +`&include-passage-references=false`
@@ -313,13 +304,24 @@ async function fetchEsv(bk,ch){
 }
 function renderEsv(txt,bk,ch){
   let h=`<div class="ch-title">${bk.en} ${ch}</div>`;
-  txt.split('\n').forEach(raw=>{
+  // Split into passage text and footnotes section (separated by blank line + footnotes)
+  const fnSplit = txt.split(/\n\n\(\d+\)/);
+  const passageText = fnSplit[0];
+  // Parse footnotes into a map: number -> text
+  const fnMap = {};
+  const fnMatches = [...txt.matchAll(/\((\d+)\)\s*([^\n(]+)/g)];
+  fnMatches.forEach(m => { fnMap[m[1]] = m[2].trim(); });
+
+  passageText.split('\n').forEach(raw=>{
     const l=raw.trim(); if(!l) return;
     const m=l.match(/^\[(\d+)\]\s*(.*)/);
     if(m){
-      // Strip any remaining footnote refs like (1) or ¹ from verse text
-      const verseText=m[2].replace(/\(\d+\)/g,'').replace(/\s+/g,' ').trim();
-      h+=`<div class="verse"><span class="vn">${m[1]}</span><span class="vt">${esc(verseText)}</span></div>`;
+      // Replace (n) refs with superscript spans that show tooltip
+      const verseText = m[2].replace(/\((\d+)\)/g, (_, n) => {
+        const note = fnMap[n] ? esc(fnMap[n]) : '';
+        return `<sup title="${note}" style="font-size:9px;color:#94a3b8;cursor:help;margin-left:1px">${n}</sup>`;
+      });
+      h+=`<div class="verse"><span class="vn">${m[1]}</span><span class="vt">${verseText}</span></div>`;
     } else if(!/^\d+$/.test(l)){
       h+=`<div class="shead">${esc(l)}</div>`;
     }
