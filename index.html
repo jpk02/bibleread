@@ -136,7 +136,7 @@ footer{border-top:1px solid #e8e5e0;color:#bbb;background:var(--bg);font-size:10
   </div>
   <div class="mob-nav">
     <button class="mob-nav-btn" id="mob-passage-btn" onclick="sheetOpen('passage')">
-      <span id="mob-passage-label">요한복음 3장</span>
+      <span id="mob-passage-label">책과 장 선택 / Select Book</span>
       <svg width="10" height="6" viewBox="0 0 10 6"><path fill="currentColor" d="M0 0l5 6 5-6z"/></svg>
     </button>
     <div class="mob-nav-actions">
@@ -203,7 +203,7 @@ function applyFs(){
   document.documentElement.style.setProperty('--fs',fs+'px');
   document.querySelectorAll('.vt').forEach(el=>el.style.fontSize=fs+'px');
 }
-function updateLabel(){document.getElementById('mob-passage-label').textContent=BOOKS[bi].ko+' '+ci+'장';}
+function updateLabel(){if(loaded)document.getElementById('mob-passage-label').textContent=BOOKS[bi].ko+' '+ci+'장';}
 function onBook(){bi=+document.getElementById('bk').value;ci=1;buildCh();}
 function buildCh(){
   const s=document.getElementById('ch');s.innerHTML='';
@@ -234,7 +234,7 @@ function sheetOpen(mode){
 }
 function sheetSelectBook(idx){
   pendingBook=idx;
-  document.getElementById('mob-sheet-title').textContent=BOOKS[idx].ko+' — 장 선택';
+  document.getElementById('mob-sheet-title').textContent=BOOKS[idx].ko+' - 장 선택 / '+BOOKS[idx].en+' - Select Chapter';
   let h='<div class="mob-ch-grid">';
   for(let i=1;i<=BOOKS[idx].ch;i++)h+='<div class="mob-ch-item '+(idx===bi&&i===ci?'active':'')+'" onclick="sheetSelectCh('+i+')">'+i+'</div>';
   h+='</div>';
