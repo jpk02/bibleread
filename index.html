@@ -63,7 +63,7 @@ main::-webkit-scrollbar-thumb { background: #d8d4ce; border-radius: 4px; }
 .vt { line-height: 1.85; color: #1c1c1c; flex: 1; }
 .ko-side .vt { font-family: 'Noto Sans KR', sans-serif; font-weight: 400; word-break: keep-all; letter-spacing: -0.02em; }
 .en-side .vt { font-family: 'DM Sans', -apple-system, sans-serif; font-weight: 400; }
-sup.fn-ref { font-size: 9px; color: #94a3b8; margin-left: 1px; vertical-align: super; line-height: 0; } sup.fn-ref a { cursor: pointer; }
+sup.fn-ref { font-size: 9px; color: #2563eb; margin-left: 1px; vertical-align: super; line-height: 0; cursor: pointer; padding: 0 1px; }
 
 .footnotes { padding: 20px 28px 40px; border-top: 1px solid #e8e5e0; margin-top: 4px; }
 .footnotes .fn-title { font-size: 10px; font-weight: 600; letter-spacing: 0.07em; text-transform: uppercase; color: #bbb; margin-bottom: 10px; }
@@ -428,19 +428,34 @@ function render(koVerses, esvData, bk, ch){
     }
 
     // Inline footnote refs → superscripts
-    const enHtml = enRaw.replace(/\((\d+)\)/g, (_,n)=>`<sup class="fn-ref"><a href="#fn-${n}" style="color:inherit;text-decoration:none">${n}</a></sup>`);
+    const enHtml = enRaw.replace(/\((\d+)\)/g, (_,n)=>`<sup class="fn-ref" onclick="scrollToFn('fn-'+${n})" title="Go to footnote">${n}</sup>`);
 
-    h+=`<div class="verse-row">
+    h+=`<div class="verse-row" id="vr-${num}">
       <div class="verse-cell ko-side"><span class="vn">${num}</span><span class="vt" style="font-size:${fs}px">${esc(kv.text)}</span></div>
       <div class="verse-cell en-side"><span class="vn">${num}</span><span class="vt" style="font-size:${fs}px">${enHtml}</span></div>
     </div>`;
   });
 
   // Footnotes — English side only
+  // Build map of footnote number -> verse number
+  const fnVerseMap = {};
+  koVerses.forEach(kv=>{
+    const num = kv.verse;
+    const enRaw2 = en[num]||'';
+    const fnRefs = [...enRaw2.matchAll(/\((\d+)\)/g)];
+    fnRefs.forEach(m=>{ fnVerseMap[m[1]]=num; });
+  });
+
   const fnKeys = Object.keys(footnotes).sort((a,b)=>+a-+b);
   if(fnKeys.length){
     let fnHtml = `<div class="footnotes"><div class="fn-title">Footnotes</div>`;
-    fnKeys.forEach(k=>{ fnHtml+=`<div class="fn-item" id="fn-${k}"><span class="fn-n">${k}</span><span>${esc(footnotes[k])}</span></div>`; });
+    fnKeys.forEach(k=>{
+      const verseNum = fnVerseMap[k];
+      const backLink = verseNum ? `onclick="scrollToVerse(${verseNum})" title="Back to verse ${verseNum}" style="cursor:pointer"` : '';
+      fnHtml+=`<div class="fn-item" id="fn-${k}" ${backLink}>`;
+      fnHtml+=`<span class="fn-n" style="color:#2563eb">${k}${verseNum?'↑':''}</span>`;
+      fnHtml+=`<span>${esc(footnotes[k])}</span></div>`;
+    });
     fnHtml += '</div>';
     h += `<div class="fn-row"><div class="ko-side"></div><div class="en-side">${fnHtml}</div></div>`;
   }
@@ -558,6 +573,25 @@ mobUpdateLabel();
     }
   }, {passive: true});
 })();
+
+function scrollToVerse(num){
+  const el = document.getElementById('vr-'+num);
+  const main = document.getElementById('main');
+  if(el && main){
+    const elTop = el.getBoundingClientRect().top;
+    const mainTop = main.getBoundingClientRect().top;
+    main.scrollTop += (elTop - mainTop) - 20;
+  }
+}
+function scrollToFn(id){
+  const el = document.getElementById(id);
+  const main = document.getElementById('main');
+  if(el && main){
+    const elTop = el.getBoundingClientRect().top;
+    const mainTop = main.getBoundingClientRect().top;
+    main.scrollTop += (elTop - mainTop) - 20;
+  }
+}
 
 function esc(s){return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
 document.addEventListener('keydown',e=>{
