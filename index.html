@@ -61,7 +61,7 @@ main::-webkit-scrollbar-thumb { background: #d8d4ce; border-radius: 4px; }
 .shead { font-size: 10px; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; color: #bbb; }
 
 /* Each verse row: both sides same height */
-.verse-row { display: grid; grid-template-columns: 1fr 1fr; border-bottom: 1px solid #eeebe6; }
+.verse-row { display: grid; grid-template-columns: 1fr 1fr; }
 .verse-row:hover { background: #f0ede8; }
 .verse-cell { padding: 9px 28px; display: flex; gap: 10px; align-items: baseline; }
 .verse-cell.ko-side { border-right: 1px solid #e8e5e0; }
@@ -250,13 +250,16 @@ async function fetchEsv(bk,ch){
   const txt = d.passages[0];
   const verses={}, headings={}, footnotes={};
 
-  // 1. Split off footnotes — they appear after passage as "(1) text" lines
-  const fnSplit = txt.split(/\n(?=\(\d+\))/);
-  const passageTxt = fnSplit[0];
-  for(let i=1; i<fnSplit.length; i++){
-    const fm = fnSplit[i].match(/^\((\d+)\)\s*([\s\S]+)/);
-    if(fm) footnotes[fm[1]] = fm[2].replace(/\n/g,' ').trim();
-  }
+  // 1. Split off footnotes — strip everything from first (N) footnote line
+  // Also strip any 'Footnotes' heading line
+  const fnIdx = txt.search(/\n\(\d+\)/);
+  const passageTxt = (fnIdx>-1 ? txt.slice(0,fnIdx) : txt)
+    .replace(/\n\s*Footnotes?\s*\n/gi,'\n')  // remove Footnotes heading
+    .replace(/\bFootnotes?\b/gi,'');           // remove inline Footnotes text
+  const fnTxt = fnIdx>-1 ? txt.slice(fnIdx) : '';
+  const fnRe2 = /\((\d+)\)\s*([^\n(]+)/g;
+  let fnm;
+  while((fnm=fnRe2.exec(fnTxt))!==null) footnotes[fnm[1]]=fnm[2].trim();
 
   // 2. Split on [N] verse markers — they appear inline within paragraphs
   //    e.g. "[1] text text [2] more text [3] more"
@@ -285,7 +288,8 @@ async function fetchEsv(bk,ch){
     const vm = clean.match(/^\[(\d+)\]\s*([\s\S]*)/);
     if(vm){
       const num = +vm[1];
-      if(headMatch) headings[num] = headMatch[1].trim();
+      const hText = headMatch ? headMatch[1].trim() : '';
+      if(hText && !/^footnotes?$/i.test(hText)) headings[num] = hText;
       verses[num] = vm[2].replace(/\s+/g,' ').trim();
     }
   }
