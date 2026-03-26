@@ -257,7 +257,7 @@ footer { border-top: 1px solid #e8e5e0; color: #bbb; background: var(--bg); font
 
 <!-- Mobile passage picker sheet -->
 <div id="mob-sheet" class="mob-sheet hidden" onclick="mobSheetBgClick(event)">
-  <div class="mob-sheet-inner" id="mob-sheet-inner" ontouchstart="event.stopPropagation()" ontouchmove="event.stopPropagation()" ontouchend="event.stopPropagation()">
+  <div class="mob-sheet-inner" id="mob-sheet-inner">
     <div class="mob-sheet-drag" id="mob-drag-pill"></div>
     <div class="mob-sheet-hdr" id="mob-sheet-hdr">
       <span id="mob-sheet-title">Select passage</span>
@@ -459,19 +459,32 @@ function render(koData, esvData, bk, ch){
     fnRefs.forEach(m=>{ fnVerseMap[m[1]]=num; });
   });
 
-  const fnKeys = Object.keys(footnotes).sort((a,b)=>+a-+b);
-  if(fnKeys.length){
-    let fnHtml = `<div class="footnotes"><div class="fn-title">Footnotes</div>`;
-    fnKeys.forEach(k=>{
-      const verseNum = fnVerseMap[k];
-      if(verseNum){
-        fnHtml+=`<div class="fn-item" id="fn-${k}"><button class="fn-back-btn" onclick="scrollToVerse(${verseNum})" type="button">${k} ↑</button><span>${esc(footnotes[k])}</span></div>`;
-      } else {
-        fnHtml+=`<div class="fn-item" id="fn-${k}"><span class="fn-n">${k}</span><span>${esc(footnotes[k])}</span></div>`;
-      }
-    });
-    fnHtml += '</div>';
-    h += `<div class="fn-row"><div class="ko-side"></div><div class="en-side">${fnHtml}</div></div>`;
+  // Korean footnotes (left side)
+  const koFnKeys = Object.keys(koFootnotes).sort((a,b)=>+a-+b);
+  const enFnKeys = Object.keys(footnotes).sort((a,b)=>+a-+b);
+  if(koFnKeys.length || enFnKeys.length){
+    let koFnHtml = '';
+    if(koFnKeys.length){
+      koFnHtml = `<div class="footnotes"><div class="fn-title">각주</div>`;
+      koFnKeys.forEach(k=>{
+        koFnHtml+=`<div class="fn-item" id="ko-fn-${k}"><span class="fn-n" style="color:#2563eb;min-width:20px">${k}</span><span>${esc(koFootnotes[k])}</span></div>`;
+      });
+      koFnHtml+='</div>';
+    }
+    let enFnHtml = '';
+    if(enFnKeys.length){
+      enFnHtml = `<div class="footnotes"><div class="fn-title">Footnotes</div>`;
+      enFnKeys.forEach(k=>{
+        const verseNum = fnVerseMap[k];
+        if(verseNum){
+          enFnHtml+=`<div class="fn-item" id="fn-${k}"><button class="fn-back-btn" onclick="scrollToVerse(${verseNum})" type="button">${k} ↑</button><span>${esc(footnotes[k])}</span></div>`;
+        } else {
+          enFnHtml+=`<div class="fn-item" id="fn-${k}"><span class="fn-n">${k}</span><span>${esc(footnotes[k])}</span></div>`;
+        }
+      });
+      enFnHtml+='</div>';
+    }
+    h += `<div class="fn-row"><div class="ko-side">${koFnHtml}</div><div class="en-side">${enFnHtml}</div></div>`;
   }
 
   document.getElementById('content').innerHTML = h;
@@ -502,6 +515,7 @@ function mobUpdateLabel(){
 }
 
 function mobOpenPassage(){
+  window._sheetOpen = true;
   attachSheetSwipe();
   mobMode = 'book';
   mobPendingBook = null;
@@ -546,6 +560,7 @@ function mobSelectChapter(ch){
 }
 
 function mobOpenFont(){
+  window._sheetOpen = true;
   attachSheetSwipe();
   mobMode = 'font';
   document.getElementById('mob-sheet-title').textContent = 'Font size';
@@ -573,6 +588,7 @@ function mobSheetBgClick(e){
 }
 
 function mobCloseSheet(){
+  window._sheetOpen = false;
   document.getElementById('mob-sheet').classList.add('hidden');
   mobMode = null; mobPendingBook = null;
 }
@@ -583,24 +599,21 @@ mobUpdateLabel();
 // Swipe down to close bottom sheet — attach once on first open
 // Sheet swipe — attached once at page load, always works
 // Attach sheet swipe once on page load — pill is always in DOM
-// Sheet swipe: listen on both the drag pill AND the header
-(function(){
+// Sheet swipe-down: drag pill only
+window.addEventListener('load', function(){
+  const pill = document.getElementById('mob-drag-pill');
+  if(!pill) return;
   let sy = 0;
-  function onStart(e){ sy = e.touches[0].clientY; }
-  function onMove(e){
-    if(e.touches[0].clientY - sy > 40) mobCloseSheet();
-  }
-  // Wait for DOM then attach to pill + header
-  window.addEventListener('load', function(){
-    ['mob-drag-pill','mob-sheet-hdr'].forEach(function(id){
-      const el = document.getElementById(id);
-      if(el){
-        el.addEventListener('touchstart', onStart, {passive:true});
-        el.addEventListener('touchmove', onMove, {passive:true});
-      }
-    });
-  });
-})();
+  pill.addEventListener('touchstart', function(e){
+    sy = e.touches[0].clientY;
+    e.stopPropagation();
+  }, {passive:true});
+  pill.addEventListener('touchmove', function(e){
+    const dy = e.touches[0].clientY - sy;
+    if(dy > 40){ mobCloseSheet(); }
+    e.stopPropagation();
+  }, {passive:true});
+});
 function attachSheetSwipe(){} // no-op
 
 // ---- Swipe to change chapter (with elastic drag feedback) ----
@@ -611,7 +624,7 @@ function attachSheetSwipe(){} // no-op
 
   main.addEventListener('touchstart', e => {
     // Don't interfere if sheet is open
-    if(!document.getElementById('mob-sheet').classList.contains('hidden')) return;
+    if(window._sheetOpen) return;
     startX = e.touches[0].clientX;
     startY = e.touches[0].clientY;
     dragging = false;
@@ -619,7 +632,7 @@ function attachSheetSwipe(){} // no-op
   }, {passive: true});
 
   main.addEventListener('touchmove', e => {
-    if(!document.getElementById('mob-sheet').classList.contains('hidden')) return;
+    if(window._sheetOpen) return;
     if(locked) return;
     const dx = e.touches[0].clientX - startX;
     const dy = e.touches[0].clientY - startY;
@@ -640,7 +653,7 @@ function attachSheetSwipe(){} // no-op
   }, {passive: true});
 
   main.addEventListener('touchend', e => {
-    if(!document.getElementById('mob-sheet').classList.contains('hidden')) return;
+    if(window._sheetOpen) return;
     if(!dragging){
       content.style.transform = '';
       return;
