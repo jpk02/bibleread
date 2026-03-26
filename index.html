@@ -63,7 +63,7 @@ main::-webkit-scrollbar-thumb { background: #d8d4ce; border-radius: 4px; }
 .vt { line-height: 1.85; color: #1c1c1c; flex: 1; }
 .ko-side .vt { font-family: 'Noto Sans KR', sans-serif; font-weight: 400; word-break: keep-all; letter-spacing: -0.02em; }
 .en-side .vt { font-family: 'DM Sans', -apple-system, sans-serif; font-weight: 400; }
-sup.fn-ref { font-size: 9px; color: #94a3b8; margin-left: 1px; vertical-align: super; line-height: 0; cursor: default; }
+sup.fn-ref { font-size: 9px; color: #94a3b8; margin-left: 1px; vertical-align: super; line-height: 0; } sup.fn-ref a { cursor: pointer; }
 
 .footnotes { padding: 20px 28px 40px; border-top: 1px solid #e8e5e0; margin-top: 4px; }
 .footnotes .fn-title { font-size: 10px; font-weight: 600; letter-spacing: 0.07em; text-transform: uppercase; color: #bbb; margin-bottom: 10px; }
@@ -83,23 +83,31 @@ footer { border-top: 1px solid #e8e5e0; color: #bbb; background: var(--bg); font
 @media (max-width: 640px) {
   header { display: none; }
   nav { padding: 6px 12px; min-height: 0; }
-  .verse-cell { padding: 8px 14px; }
-  .col-hdr { padding: 10px 12px; }
   .col-headers { display: none; }
-  .title-row, .shead-row { padding: 16px 14px 4px; }
   .col-headers, .title-row, .shead-row, .verse-row { grid-template-columns: 1fr; }
 
-  /* Fix 1: Remove divider between ko and en cells — use bottom border on en cell instead */
-  .verse-cell.ko-side { border-right: none !important; border-bottom: none !important; padding-bottom: 2px; }
-  .verse-cell.en-side { border-bottom: 1px solid #eeebe6; padding-top: 2px; }
-  .title-row .ko-side, .shead-row .ko-side { border-right: none !important; border-bottom: none !important; }
+  /* Stack ko above en with no vertical divider between them */
+  .verse-cell { padding: 6px 14px; }
+  .verse-cell.ko-side {
+    border-right: 0 !important;
+    border-bottom: none !important;
+    padding-bottom: 2px;
+  }
+  .verse-cell.en-side {
+    padding-top: 2px;
+    border-bottom: 1px solid #e8e5e0;
+  }
+  .title-row { padding: 16px 14px 4px; }
+  .title-row .ko-side { border-right: 0 !important; border-bottom: none !important; padding-bottom: 4px; }
   .title-row .en-side { padding-top: 0; }
+  .shead-row { padding: 12px 14px 2px; }
+  .shead-row .ko-side { display: none; }
 
-  /* Fix 2: Footnotes full width on mobile */
-  .fn-row { display: block; }
-  .fn-row .ko-side { display: none; }
-  .fn-row .en-side { padding: 16px 14px 32px; }
-  .footnotes { padding: 0; border-top: 1px solid #e8e5e0; }
+  /* Footnotes: full width, not grid */
+  .fn-row { display: block !important; }
+  .fn-row .ko-side { display: none !important; }
+  .fn-row .en-side { padding: 0 !important; }
+  .footnotes { padding: 14px 14px 32px; border-top: 1px solid #e8e5e0; }
 }
 
 /* Desktop/mobile visibility */
@@ -420,7 +428,7 @@ function render(koVerses, esvData, bk, ch){
     }
 
     // Inline footnote refs → superscripts
-    const enHtml = enRaw.replace(/\((\d+)\)/g, (_,n)=>`<sup class="fn-ref">${n}</sup>`);
+    const enHtml = enRaw.replace(/\((\d+)\)/g, (_,n)=>`<sup class="fn-ref"><a href="#fn-${n}" style="color:inherit;text-decoration:none">${n}</a></sup>`);
 
     h+=`<div class="verse-row">
       <div class="verse-cell ko-side"><span class="vn">${num}</span><span class="vt" style="font-size:${fs}px">${esc(kv.text)}</span></div>
@@ -432,7 +440,7 @@ function render(koVerses, esvData, bk, ch){
   const fnKeys = Object.keys(footnotes).sort((a,b)=>+a-+b);
   if(fnKeys.length){
     let fnHtml = `<div class="footnotes"><div class="fn-title">Footnotes</div>`;
-    fnKeys.forEach(k=>{ fnHtml+=`<div class="fn-item"><span class="fn-n">${k}</span><span>${esc(footnotes[k])}</span></div>`; });
+    fnKeys.forEach(k=>{ fnHtml+=`<div class="fn-item" id="fn-${k}"><span class="fn-n">${k}</span><span>${esc(footnotes[k])}</span></div>`; });
     fnHtml += '</div>';
     h += `<div class="fn-row"><div class="ko-side"></div><div class="en-side">${fnHtml}</div></div>`;
   }
