@@ -80,7 +80,7 @@ sup.fn-ref { font-size: 9px; color: #2563eb; margin-left: 1px; vertical-align: s
 .ldg-txt { font-size: 12px; color: #bbb; }
 .errbox { background: #fff5f5; border: 1px solid #fecaca; border-radius: 6px; color: #dc2626; padding: 10px 14px; font-size: 13px; line-height: 1.5; margin: 16px 28px; }
 
-footer { border-top: 1px solid #e8e5e0; color: #bbb; background: var(--bg); font-size: 10px; padding: 8px 20px; text-align: center; flex-shrink: 0; }
+footer { border-top: 1px solid #e8e5e0; color: #bbb; background: var(--bg); font-size: 10px; padding: 8px 20px; text-align: center; }
 
 @media (max-width: 640px) {
   header { display: none; }
@@ -123,7 +123,7 @@ footer { border-top: 1px solid #e8e5e0; color: #bbb; background: var(--bg); font
 .mob-nav-btn {
   display: flex; align-items: center; gap: 6px;
   background: #efecea; border: 1px solid #d8d4ce; border-radius: 8px;
-  font: 700 13px inherit; color: #222; padding: 7px 12px;
+  font-size: 13px; font-weight: 700; color: #222; padding: 7px 12px; font-family: inherit;
   cursor: pointer; flex: 1; max-width: calc(100% - 110px);
 }
 .mob-nav-btn span { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
@@ -256,7 +256,7 @@ footer { border-top: 1px solid #e8e5e0; color: #bbb; background: var(--bg); font
 
 <!-- Mobile passage picker sheet -->
 <div id="mob-sheet" class="mob-sheet hidden" onclick="mobSheetBgClick(event)">
-  <div class="mob-sheet-inner">
+  <div class="mob-sheet-inner" id="mob-sheet-inner">
     <div class="mob-sheet-hdr">
       <span id="mob-sheet-title">Select passage</span>
       <button class="mob-sheet-close" onclick="mobCloseSheet()">✕</button>
@@ -269,9 +269,9 @@ footer { border-top: 1px solid #e8e5e0; color: #bbb; background: var(--bg); font
   <div id="content">
     <div class="ph"><p>책과 장을 선택하고 Read를 누르세요</p></div>
   </div>
-</main>
 
 <footer>개역개정판 © 대한성서공회 &nbsp;·&nbsp; ESV® © 2001 Crossway · Used by permission</footer>
+</main>
 
 <script>
 const WORKER='https://bibleread.pauljkim22.workers.dev';
@@ -483,6 +483,7 @@ function mobUpdateLabel(){
 }
 
 function mobOpenPassage(){
+  attachSheetSwipe();
   mobMode = 'book';
   mobPendingBook = null;
   document.getElementById('mob-sheet-title').textContent = 'Select book';
@@ -526,6 +527,7 @@ function mobSelectChapter(ch){
 }
 
 function mobOpenFont(){
+  attachSheetSwipe();
   mobMode = 'font';
   document.getElementById('mob-sheet-title').textContent = 'Font size';
   const body = document.getElementById('mob-sheet-body');
@@ -559,8 +561,11 @@ function mobCloseSheet(){
 // Init mobile label
 mobUpdateLabel();
 
-// Swipe down to close bottom sheet
-(function(){
+// Swipe down to close bottom sheet — attach once on first open
+let _sheetSwipeAttached = false;
+function attachSheetSwipe(){
+  if(_sheetSwipeAttached) return;
+  _sheetSwipeAttached = true;
   const inner = document.getElementById('mob-sheet-inner');
   if(!inner) return;
   let sy = 0;
@@ -571,7 +576,7 @@ mobUpdateLabel();
     const dy = e.changedTouches[0].clientY - sy;
     if(dy > 60) mobCloseSheet();
   }, {passive: true});
-})();
+}
 
 // ---- Swipe to change chapter ----
 (function(){
