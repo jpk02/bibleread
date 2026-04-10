@@ -56,8 +56,6 @@ sup.fn-ref{font-size:9px;color:#2563eb;margin-left:1px;vertical-align:super;line
 .fn-item{display:flex;gap:8px;font-size:12px;color:#777;line-height:1.6;margin-bottom:3px;border-radius:4px;padding:4px 2px}
 .fn-back-btn{background:none;border:none;color:#2563eb;font:600 10px inherit;cursor:pointer;padding:2px 4px;border-radius:4px;min-width:28px;text-align:left;line-height:1.4;flex-shrink:0}
 .fn-n{color:#94a3b8;font-size:9px;font-weight:600;flex-shrink:0;padding-top:3px}
-.ph{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;padding:72px 20px;color:#bbb;text-align:center}
-.ph p{font-size:13px;line-height:1.6}
 .ldg{display:flex;flex-direction:column;align-items:center;gap:12px;padding:64px 20px}
 @keyframes spin{to{transform:rotate(360deg)}}
 .spinner{width:20px;height:20px;border-radius:50%;border:2px solid #e8e5e0;border-top-color:#555;animation:spin .6s linear infinite}
@@ -93,7 +91,6 @@ footer{border-top:1px solid #e8e5e0;color:#bbb;background:var(--bg);font-size:10
 .mob-nav-actions{display:flex;gap:5px;flex-shrink:0}
 .mob-icon-btn{background:#efecea;border:1px solid #d8d4ce;border-radius:8px;font:500 14px inherit;color:#444;width:34px;height:34px;display:flex;align-items:center;justify-content:center;cursor:pointer}
 .mob-icon-btn:disabled{opacity:.35;cursor:not-allowed}
-/* Sheet */
 .mob-sheet{position:fixed;inset:0;z-index:100;background:rgba(0,0,0,.4);display:flex;align-items:flex-end}
 .mob-sheet.hidden{display:none}
 .mob-sheet-inner{background:var(--bg);border-radius:16px 16px 0 0;width:100%;max-height:85vh;display:flex;flex-direction:column;overflow:hidden}
@@ -169,40 +166,33 @@ let bi=42,ci=3,fs=15,pendingBook=null,loaded=false;
   document.getElementById('fminus').addEventListener('click',()=>{fs=Math.max(11,fs-1);applyFs();});
   document.getElementById('fplus').addEventListener('click',()=>{fs=Math.min(22,fs+1);applyFs();});
   updateLabel();
-  // Tap dark backdrop closes sheet
   document.getElementById('mob-sheet').addEventListener('click',function(e){
     if(e.target===this) sheetClose();
   });
-  // Swipe down on sheet inner to close — 150px threshold feels natural
-  // Swipe-to-close only from the header — never interfere with scrollable body
   var sheetInner=document.querySelector('.mob-sheet-inner');
   var sheetHdr=document.querySelector('.mob-sheet-hdr');
-  var swy=0, swActive=false;
-  sheetHdr.addEventListener('touchstart',function(e){
-    swy=e.touches[0].clientY; swActive=true;
-  },{passive:true});
+  var swy=0,swActive=false;
+  sheetHdr.addEventListener('touchstart',function(e){swy=e.touches[0].clientY;swActive=true;},{passive:true});
   sheetHdr.addEventListener('touchmove',function(e){
-    if(!swActive) return;
-    var dy=e.touches[0].clientY - swy;
-    if(dy > 0) sheetInner.style.transform='translateY('+Math.min(dy,300)+'px)';
+    if(!swActive)return;
+    var dy=e.touches[0].clientY-swy;
+    if(dy>0)sheetInner.style.transform='translateY('+Math.min(dy,300)+'px)';
   },{passive:true});
   sheetHdr.addEventListener('touchend',function(e){
-    if(!swActive) return;
+    if(!swActive)return;
     swActive=false;
-    var dy=e.changedTouches[0].clientY - swy;
-    if(dy > 100){
+    var dy=e.changedTouches[0].clientY-swy;
+    if(dy>100){
       sheetInner.style.transition='transform 0.2s ease';
       sheetInner.style.transform='translateY(100%)';
-      setTimeout(function(){ sheetInner.style.transform=''; sheetInner.style.transition=''; sheetClose(); },200);
+      setTimeout(function(){sheetInner.style.transform='';sheetInner.style.transition='';sheetClose();},200);
     } else {
       sheetInner.style.transition='transform 0.2s ease';
       sheetInner.style.transform='';
-      setTimeout(function(){ sheetInner.style.transition=''; },200);
+      setTimeout(function(){sheetInner.style.transition='';},200);
     }
   },{passive:true});
-  sheetHdr.addEventListener('touchcancel',function(){
-    swActive=false; sheetInner.style.transform='';
-  },{passive:true});
+  sheetHdr.addEventListener('touchcancel',function(){swActive=false;sheetInner.style.transform='';},{passive:true});
 })();
 function applyFs(){
   document.documentElement.style.setProperty('--fs',fs+'px');
@@ -315,18 +305,18 @@ function render(koData,esvData,bk,ch){
     let kh2='',eh2='';
     if(kfk.length){
       kh2='<div class="footnotes"><div class="fn-title">각주</div>';
-      // Build map of KN footnote number -> verse number
-    var koFnVm={};
-    kv.forEach(function(x){
-      var matches=x.text.match(/\(KN:(\d+)\)/g)||[];
-      matches.forEach(function(m){var n=m.replace(/[^\d]/g,'');koFnVm[n]=x.verse;});
-    });
-    kfk.forEach(function(k){
-      var vn=koFnVm[k];
-      kh2+=vn
-        ?'<div class="fn-item" id="ko-fn-'+k+'"><button class="fn-back-btn" onclick="scrollToVerse('+vn+')">'+k+' ↑</button><span>'+esc(kf[k])+'</span></div>'
-        :'<div class="fn-item" id="ko-fn-'+k+'"><span class="fn-n">'+k+'</span><span>'+esc(kf[k])+'</span></div>';
-    });
+      var koFnVm={};
+      kv.forEach(function(x){
+        var matches=x.text.match(/\(KN:(\d+)\)/g)||[];
+        matches.forEach(function(m){var n=m.replace(/[^\d]/g,'');koFnVm[n]=x.verse;});
+      });
+      kfk.forEach(function(k){
+        var vn=koFnVm[k];
+        kh2+='<div class="fn-item" id="ko-fn-'+k+'">'
+          +(vn?'<button class="fn-back-btn" onclick="scrollToVerse('+vn+')">'+k+' ↑</button>'
+              :'<button class="fn-back-btn" style="cursor:default">'+k+' ↑</button>')
+          +'<span>'+esc(kf[k])+'</span></div>';
+      });
       kh2+='</div>';
     }
     if(efk.length){
@@ -334,7 +324,7 @@ function render(koData,esvData,bk,ch){
       efk.forEach(function(k){
         var vn=vm[k];
         eh2+=vn
-          ?'<div class="fn-item" id="fn-'+k+'"><button class="fn-back-btn" onclick="scrollToVerse('+vn+')">'+k+' &#8593;</button><span>'+esc(footnotes[k])+'</span></div>'
+          ?'<div class="fn-item" id="fn-'+k+'"><button class="fn-back-btn" onclick="scrollToVerse('+vn+')">'+k+' ↑</button><span>'+esc(footnotes[k])+'</span></div>'
           :'<div class="fn-item" id="fn-'+k+'"><span class="fn-n">'+k+'</span><span>'+esc(footnotes[k])+'</span></div>';
       });
       eh2+='</div>';
@@ -343,7 +333,6 @@ function render(koData,esvData,bk,ch){
   }
   document.getElementById('content').innerHTML=h;
 }
-// Chapter swipe
 (function(){
   const main=document.getElementById('main');
   const content=document.getElementById('content');
