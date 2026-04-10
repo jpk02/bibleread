@@ -361,6 +361,11 @@ function toggleLangOrder(btn){
   if(btn)btn.textContent=langOrder==='ko-en'?'한':'Eng';
   updateLabel();
   if(loaded)applyLangOrder();
+  // Update VOTD button if visible
+  var koBtn=document.querySelector('.votd-btn-ko');
+  var enBtn=document.querySelector('.votd-btn-en');
+  if(koBtn) koBtn.style.display=langOrder==='en-ko'?'none':'';
+  if(enBtn) enBtn.style.display=langOrder==='ko-en'?'none':'';
   if(!document.getElementById('mob-sheet').classList.contains('hidden')){
     if(progView==='overview')progShowOverview();
     else if(pendingBook===null)sheetOpen('passage');
