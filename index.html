@@ -601,7 +601,8 @@ function progShowOverview(){
   });
   html+='</div>';
 
-  html+='<div style="display:flex;justify-content:center;padding:16px"><button onclick="progReset()" style="background:#efecea;border:1px solid #d8d4ce;color:#666;font:500 12px inherit;cursor:pointer;padding:6px 20px;border-radius:6px;font-family:inherit">Reset All</button></div>';
+  var resetLbl=langOrder==='ko-en'?'초기화 / Reset All':'Reset All / 초기화';
+  html+='<div style="display:flex;justify-content:center;padding:16px"><button onclick="progReset()" style="background:#efecea;border:1px solid #d8d4ce;color:#666;font:500 12px inherit;cursor:pointer;padding:6px 20px;border-radius:6px;font-family:inherit">'+resetLbl+'</button></div>';
   document.getElementById('mob-sheet-body').innerHTML=html;
 }
 
