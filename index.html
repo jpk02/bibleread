@@ -295,25 +295,16 @@ function toggleLangOrder(){
   if(loaded) applyLangOrder();
 }
 function applyLangOrder(){
-  // Target all verse cells and title rows
-  var allKo = document.querySelectorAll('.verse-cell.ko-side, .title-row .ko-side');
-  var allEn = document.querySelectorAll('.verse-cell.en-side, .title-row .en-side');
+  // On mobile, rows are already single-column grid
+  // Use CSS order property — works on grid children too
+  var styleId = 'lang-order-style';
+  var existing = document.getElementById(styleId);
+  if(existing) existing.remove();
   if(langOrder==='en-ko'){
-    allKo.forEach(function(el){el.style.order='2';});
-    allEn.forEach(function(el){el.style.order='1';});
-    // Make verse-rows flex column
-    document.querySelectorAll('.verse-row').forEach(function(r){
-      r.style.display='flex';r.style.flexDirection='column';
-    });
-    document.querySelectorAll('.title-row').forEach(function(r){
-      r.style.display='flex';r.style.flexDirection='column';
-    });
-  } else {
-    allKo.forEach(function(el){el.style.order='';});
-    allEn.forEach(function(el){el.style.order='';});
-    document.querySelectorAll('.verse-row,.title-row').forEach(function(r){
-      r.style.display='';r.style.flexDirection='';
-    });
+    var s = document.createElement('style');
+    s.id = styleId;
+    s.textContent = '.verse-cell.ko-side{order:2} .verse-cell.en-side{order:1} .verse-row{display:flex;flex-direction:column} .title-row .ko-side{order:2} .title-row .en-side{order:1} .title-row{display:flex;flex-direction:column}';
+    document.head.appendChild(s);
   }
 }
 
