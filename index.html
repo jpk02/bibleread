@@ -288,7 +288,6 @@ function parseAndLoad(raw){
 
 
 function toggleLangOrder(){
-  if(window.innerWidth>640) return;
   langOrder = langOrder==='ko-en' ? 'en-ko' : 'ko-en';
   const btn = document.getElementById('mob-lang-btn');
   if(btn) btn.textContent = langOrder==='ko-en' ? '한' : 'Eng';
