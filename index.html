@@ -154,7 +154,7 @@ footer{border-top:1px solid #e8e5e0;color:#bbb;background:var(--bg);font-size:10
     </button>
     <div class="mob-nav-actions">
       <button class="mob-icon-btn" onclick="sheetOpen('font')">A</button>
-      <button class="mob-icon-btn" id="mob-lang-btn" onclick="toggleLangOrder()" title="언어 순서">한↕</button>
+      <button class="mob-icon-btn" id="mob-lang-btn" onclick="toggleLangOrder()" title="언어 순서">한</button>
     </div>
   </div>
 </nav>
@@ -219,7 +219,7 @@ function applyFs(){
   document.documentElement.style.setProperty('--fs',fs+'px');
   document.querySelectorAll('.vt').forEach(el=>el.style.fontSize=fs+'px');
 }
-function updateLabel(){if(loaded)document.getElementById('mob-passage-label').textContent=BOOKS[bi].ko+' '+ci+'장';}
+function updateLabel(){document.getElementById('mob-passage-label').textContent=loaded?BOOKS[bi].ko+' '+ci+'장':'책 선택 / Select Book';}
 function onBook(){}
 function buildCh(){}
 function step(d){
@@ -287,28 +287,31 @@ function parseAndLoad(raw){
 function toggleLangOrder(){
   langOrder = langOrder==='ko-en' ? 'en-ko' : 'ko-en';
   const btn = document.getElementById('mob-lang-btn');
-  if(btn) btn.textContent = langOrder==='ko-en' ? '한↕' : '영↕';
+  if(btn) btn.textContent = langOrder==='ko-en' ? '한' : 'Eng';
   // Re-render if loaded
   if(loaded) applyLangOrder();
 }
 function applyLangOrder(){
-  const rows = document.querySelectorAll('.verse-row');
-  rows.forEach(function(row){
-    const ko = row.querySelector('.ko-side');
-    const en = row.querySelector('.en-side');
-    if(!ko||!en) return;
-    if(langOrder==='en-ko'){
-      row.style.display='flex';
-      row.style.flexDirection='column';
-      en.style.order='1';
-      ko.style.order='2';
-    } else {
-      row.style.display='';
-      row.style.flexDirection='';
-      en.style.order='';
-      ko.style.order='';
-    }
-  });
+  // Target all verse cells and title rows
+  var allKo = document.querySelectorAll('.verse-cell.ko-side, .title-row .ko-side');
+  var allEn = document.querySelectorAll('.verse-cell.en-side, .title-row .en-side');
+  if(langOrder==='en-ko'){
+    allKo.forEach(function(el){el.style.order='2';});
+    allEn.forEach(function(el){el.style.order='1';});
+    // Make verse-rows flex column
+    document.querySelectorAll('.verse-row').forEach(function(r){
+      r.style.display='flex';r.style.flexDirection='column';
+    });
+    document.querySelectorAll('.title-row').forEach(function(r){
+      r.style.display='flex';r.style.flexDirection='column';
+    });
+  } else {
+    allKo.forEach(function(el){el.style.order='';});
+    allEn.forEach(function(el){el.style.order='';});
+    document.querySelectorAll('.verse-row,.title-row').forEach(function(r){
+      r.style.display='';r.style.flexDirection='';
+    });
+  }
 }
 
 function sheetOpen(mode){
@@ -337,6 +340,7 @@ function sheetSelectBook(idx){
 }
 function sheetSelectCh(ch){
   bi=pendingBook;ci=ch;
+  loaded=true;
   sheetClose();updateLabel();load();
 }
 function sheetClose(){document.getElementById('mob-sheet').classList.add('hidden');pendingBook=null;}
