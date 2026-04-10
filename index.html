@@ -170,8 +170,9 @@ const BOOKS=[{ko:"창세기",en:"Genesis",n:1,ch:50},{ko:"출애굽기",en:"Exod
 let bi=42,ci=3,fs=15,pendingBook=null,loaded=false;
 (function(){
   const s=document.getElementById('bk');
+  const ph=document.createElement('option');ph.value='';ph.textContent='책 선택 / Select Book';ph.disabled=true;s.appendChild(ph);
   BOOKS.forEach((b,i)=>{const o=document.createElement('option');o.value=i;o.textContent=b.ko+'  .  '+b.en;s.appendChild(o);});
-  s.value=bi;buildCh();document.getElementById('ch').value=ci;
+  s.value='';document.getElementById('ch').innerHTML='<option value="" disabled selected>장</option>';
   applyFs();
   document.getElementById('fminus').addEventListener('click',()=>{fs=Math.max(11,fs-1);applyFs();});
   document.getElementById('fplus').addEventListener('click',()=>{fs=Math.min(22,fs+1);applyFs();});
@@ -209,7 +210,7 @@ function applyFs(){
   document.querySelectorAll('.vt').forEach(el=>el.style.fontSize=fs+'px');
 }
 function updateLabel(){if(loaded)document.getElementById('mob-passage-label').textContent=BOOKS[bi].ko+' '+ci+'장';}
-function onBook(){bi=+document.getElementById('bk').value;ci=1;buildCh();load();}
+function onBook(){const v=document.getElementById('bk').value;if(v==='')return;bi=+v;ci=1;buildCh();load();}
 function buildCh(){
   const s=document.getElementById('ch');s.innerHTML='';
   for(let i=1;i<=BOOKS[bi].ch;i++){const o=document.createElement('option');o.value=i;o.textContent=i;s.appendChild(o);}
@@ -258,8 +259,8 @@ function adjFont(d){
 async function load(){
   bi=+document.getElementById('bk').value;ci=+document.getElementById('ch').value;
   const bk=BOOKS[bi];
-  document.getElementById('bp').disabled=(bi===0&&ci===1);document.getElementById('edge-bp').disabled=(bi===0&&ci===1);
-  document.getElementById('bn').disabled=(bi===BOOKS.length-1&&ci===bk.ch);document.getElementById('edge-bn').disabled=(bi===BOOKS.length-1&&ci===bk.ch);
+  var ebp=document.getElementById('edge-bp');if(ebp)ebp.disabled=(bi===0&&ci===1);
+  var ebn=document.getElementById('edge-bn');if(ebn)ebn.disabled=(bi===BOOKS.length-1&&ci===bk.ch);
   
   document.getElementById('content').innerHTML='<div class="ldg"><div class="spinner"></div><div class="ldg-txt">Loading…</div></div>';
   const [kr,er]=await Promise.allSettled([fetchKo(bk,ci),fetchEsv(bk,ci)]);
