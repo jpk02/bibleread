@@ -47,7 +47,7 @@ main::-webkit-scrollbar-thumb:hover{background:#999590}
 .shead{font-size:10px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:#bbb}
 .verse-row{display:grid;grid-template-columns:1fr 1fr}
 .verse-row:hover{background:#f0ede8}
-.verse-cell{padding:9px 28px;display:flex;gap:10px;align-items:baseline}
+.verse-cell{padding:5px 28px;display:flex;gap:10px;align-items:baseline}
 .verse-cell.ko-side{border-right:1px solid #e8e5e0}
 .vn{color:#ccc;font-size:10px;font-weight:600;min-width:16px;text-align:right;flex-shrink:0;font-variant-numeric:tabular-nums;padding-top:2px}
 .vt{line-height:1.85;color:#1c1c1c;flex:1}
@@ -162,6 +162,50 @@ body.dark #passage-input::placeholder{color:#555}
 body.dark .edge-btn{background:rgba(30,30,30,0.85);border-color:#444;color:#aaa}
 body.dark main::-webkit-scrollbar-track{background:#222}
 body.dark main::-webkit-scrollbar-thumb{background:#444}
+
+.prog-section{padding:16px}
+.prog-testament{margin-bottom:20px}
+.prog-testament-title{font-size:11px;font-weight:600;letter-spacing:.07em;text-transform:uppercase;color:#bbb;margin-bottom:10px}
+.prog-bar-row{display:flex;align-items:center;gap:10px;margin-bottom:8px}
+.prog-bar-label{font-size:12px;color:#777;width:60px;flex-shrink:0}
+.prog-bar-track{flex:1;height:6px;background:#efecea;border-radius:3px;overflow:hidden}
+.prog-bar-fill{height:100%;background:#2563eb;border-radius:3px;transition:width 0.3s}
+.prog-bar-pct{font-size:11px;color:#bbb;width:32px;text-align:right;flex-shrink:0}
+.prog-books{display:grid;grid-template-columns:repeat(2,1fr);gap:6px;padding:16px}
+.prog-book{padding:10px 12px;background:#efecea;border-radius:8px;cursor:pointer;position:relative}
+.prog-book:active{background:#e0dbd4}
+.prog-book.complete{background:#dbeafe}
+.prog-book.partial{background:#eff6ff}
+.prog-book-name{font-size:12px;font-weight:500;color:#222}
+.prog-book-ko{font-family:'Noto Sans KR',sans-serif;font-size:11px;color:#666;margin-top:1px}
+.prog-book-pct{font-size:10px;color:#2563eb;margin-top:3px}
+.prog-chapters{display:grid;grid-template-columns:repeat(6,1fr);gap:5px;padding:16px}
+.prog-ch{aspect-ratio:1;display:flex;align-items:center;justify-content:center;border-radius:6px;font-size:12px;cursor:pointer;position:relative}
+.prog-ch.unread{background:#efecea;color:#555}
+.prog-ch.auto{background:#2563eb;color:#fff}
+.prog-ch.manual{background:#1d4ed8;color:#fff}
+.prog-ch.auto::after{content:'';position:absolute;bottom:3px;right:3px;width:4px;height:4px;background:rgba(255,255,255,.6);border-radius:50%}
+.prog-back-btn{background:none;border:none;color:#2563eb;font:500 13px inherit;cursor:pointer;padding:4px 0;display:flex;align-items:center;gap:4px}
+.prog-summary{display:flex;gap:16px;padding:0 16px 12px;font-size:12px;color:#777}
+.prog-summary b{color:#222}
+body.dark .prog-book{background:#2a2a2a}
+body.dark .prog-book.complete{background:#1e3a5f}
+body.dark .prog-book.partial{background:#1a2f4a}
+body.dark .prog-book-name{color:#e8e5e0}
+body.dark .prog-book-ko{color:#999}
+body.dark .prog-ch.unread{background:#2a2a2a;color:#999}
+body.dark .prog-bar-track{background:#2a2a2a}
+body.dark .prog-back-btn{color:#60a5fa}
+
+.fn-popup{
+  position:fixed;z-index:200;
+  background:#fff;border:1px solid #e8e5e0;border-radius:8px;
+  padding:10px 14px;max-width:280px;font-size:12px;color:#444;line-height:1.6;
+  box-shadow:0 4px 16px rgba(0,0,0,.12);
+  pointer-events:none;
+  transition:opacity .15s;
+}
+body.dark .fn-popup{background:#2a2a2a;border-color:#444;color:#ccc;box-shadow:0 4px 16px rgba(0,0,0,.4)}
 </style>
 </head>
 <body>
@@ -177,6 +221,7 @@ body.dark main::-webkit-scrollbar-thumb{background:#444}
     <button class="fbtn" id="fminus" type="button">&#8722;</button>
     <button class="fbtn" id="fplus" type="button">+</button>
     <button class="fbtn" id="desk-dark-btn" onclick="toggleDark(this)" style="font-size:11px">◐</button>
+    <button class="fbtn" onclick="sheetOpen('progress')" title="Reading Progress" style="font-size:11px">☑</button>
   </div>
   <!-- Mobile -->
   <div class="mob-nav">
@@ -188,6 +233,7 @@ body.dark main::-webkit-scrollbar-thumb{background:#444}
       <button class="mob-icon-btn" onclick="sheetOpen('font')">A</button>
       <button class="mob-icon-btn" id="mob-lang-btn" onclick="toggleLangOrder(this)">한</button>
       <button class="mob-icon-btn" id="mob-dark-btn" onclick="toggleDark(this)">◐</button>
+      <button class="mob-icon-btn" id="mob-progress-btn" onclick="sheetOpen('progress')">☑</button>
     </div>
   </div>
 </nav>
@@ -200,6 +246,7 @@ body.dark main::-webkit-scrollbar-thumb{background:#444}
     <div id="mob-sheet-body"></div>
   </div>
 </div>
+<div id="fn-popup" class="fn-popup" style="opacity:0;display:none"></div>
 <main id="main">
   <div id="content"></div>
   <footer>개역개정판 &copy; 대한성서공회 &nbsp;&middot;&nbsp; ESV&reg; &copy; 2001 Crossway &middot; Used by permission</footer>
@@ -345,9 +392,133 @@ function toggleDark(btn){
   });
 }
 
+// ── Reading Progress ──
+var PROGRESS_KEY = 'krengbible_progress';
+
+function progLoad(){
+  try{ return JSON.parse(localStorage.getItem(PROGRESS_KEY)||'{}'); }
+  catch(e){ return {}; }
+}
+function progSave(data){
+  try{ localStorage.setItem(PROGRESS_KEY, JSON.stringify(data)); }
+  catch(e){}
+}
+function progKey(bi,ci){ return bi+'_'+ci; }
+function progMarkRead(bi,ci,source){
+  var data=progLoad();
+  var k=progKey(bi,ci);
+  if(!data[k]){
+    data[k]={date:new Date().toISOString().slice(0,10),source:source};
+    progSave(data);
+  }
+}
+function progToggleManual(bi,ci){
+  var data=progLoad();
+  var k=progKey(bi,ci);
+  if(data[k]) delete data[k];
+  else data[k]={date:new Date().toISOString().slice(0,10),source:'manual'};
+  progSave(data);
+  // Re-render chapter view
+  progShowBook(bi);
+}
+
+// IntersectionObserver: mark read when last verse enters viewport
+var progObserver = null;
+function progAttachObserver(){
+  if(progObserver){ progObserver.disconnect(); progObserver=null; }
+  var lastVerse = document.querySelector('.verse-row:last-of-type');
+  if(!lastVerse||!loaded) return;
+  progObserver = new IntersectionObserver(function(entries){
+    entries.forEach(function(e){
+      if(e.isIntersecting){
+        progMarkRead(bi,ci,'auto');
+        progObserver.disconnect();
+      }
+    });
+  },{root:document.getElementById('main'),threshold:0.1});
+  progObserver.observe(lastVerse);
+}
+
+// Progress sheet views
+var progView = 'overview'; // 'overview' | 'book'
+var progViewBook = 0;
+
+function progShowOverview(){
+  progView='overview';
+  document.getElementById('mob-sheet-title').textContent='Reading Progress';
+  var data=progLoad();
+  var OT=BOOKS.slice(0,39), NT=BOOKS.slice(39);
+  function bookStats(books,startIdx){
+    var total=0,read=0;
+    books.forEach(function(b,i){
+      total+=b.ch;
+      for(var c=1;c<=b.ch;c++) if(data[progKey(startIdx+i,c)]) read++;
+    });
+    return{total:total,read:read};
+  }
+  var otS=bookStats(OT,0), ntS=bookStats(NT,39);
+  var totalRead=otS.read+ntS.read, totalCh=otS.total+ntS.total;
+
+  var html='<div class="prog-section">';
+  html+='<div class="prog-summary"><span><b>'+totalRead+'</b> / '+totalCh+' chapters</span><span><b>'+Math.round(totalRead/totalCh*100)+'%</b> of Bible</span></div>';
+  // Bars
+  html+='<div class="prog-testament">';
+  html+='<div class="prog-testament-title">Old Testament</div>';
+  html+='<div class="prog-bar-row"><span class="prog-bar-label">'+otS.read+'/'+otS.total+'</span><div class="prog-bar-track"><div class="prog-bar-fill" style="width:'+Math.round(otS.read/otS.total*100)+'%"></div></div><span class="prog-bar-pct">'+Math.round(otS.read/otS.total*100)+'%</span></div>';
+  html+='</div>';
+  html+='<div class="prog-testament">';
+  html+='<div class="prog-testament-title">New Testament</div>';
+  html+='<div class="prog-bar-row"><span class="prog-bar-label">'+ntS.read+'/'+ntS.total+'</span><div class="prog-bar-track"><div class="prog-bar-fill" style="width:'+Math.round(ntS.read/ntS.total*100)+'%"></div></div><span class="prog-bar-pct">'+Math.round(ntS.read/ntS.total*100)+'%</span></div>';
+  html+='</div>';
+  html+='</div>';
+
+  // Book grid
+  html+='<div class="prog-testament-title" style="padding:0 16px 6px;font-size:11px;font-weight:600;letter-spacing:.07em;text-transform:uppercase;color:#bbb">Books</div>';
+  html+='<div class="prog-books">';
+  BOOKS.forEach(function(b,i){
+    var readCh=0;
+    for(var c=1;c<=b.ch;c++) if(data[progKey(i,c)]) readCh++;
+    var cls=readCh===b.ch?'complete':readCh>0?'partial':'';
+    var pct=Math.round(readCh/b.ch*100);
+    html+='<div class="prog-book '+cls+'" onclick="progShowBook('+i+')">';
+    html+='<div class="prog-book-name">'+b.en+'</div>';
+    html+='<div class="prog-book-ko">'+b.ko+'</div>';
+    if(readCh>0) html+='<div class="prog-book-pct">'+readCh+'/'+b.ch+' ('+pct+'%)</div>';
+    html+='</div>';
+  });
+  html+='</div>';
+
+  document.getElementById('mob-sheet-body').innerHTML=html;
+}
+
+function progShowBook(bookIdx){
+  progView='book';
+  progViewBook=bookIdx;
+  var b=BOOKS[bookIdx];
+  document.getElementById('mob-sheet-title').textContent=b.ko+' '+b.en;
+  var data=progLoad();
+  var html='<div style="padding:12px 16px 4px">';
+  html+='<button class="prog-back-btn" onclick="progShowOverview()">← Back</button>';
+  html+='</div>';
+  html+='<div class="prog-chapters">';
+  for(var c=1;c<=b.ch;c++){
+    var k=progKey(bookIdx,c);
+    var entry=data[k];
+    var cls=entry?(entry.source==='auto'?'auto':'manual'):'unread';
+    html+='<div class="prog-ch '+cls+'" onclick="progToggleManual('+bookIdx+','+c+')" title="'+(entry?entry.date+' ('+entry.source+')':'Tap to mark read')+'">'+c+'</div>';
+  }
+  html+='</div>';
+  html+='<div style="padding:8px 16px;font-size:11px;color:#bbb">● Auto-detected &nbsp; Tap to toggle manual</div>';
+  document.getElementById('mob-sheet-body').innerHTML=html;
+}
+
 function sheetOpen(mode){
   document.getElementById('mob-sheet').classList.remove('hidden');
   const body=document.getElementById('mob-sheet-body');
+  if(mode==='progress'){
+    progShowOverview();
+    return;
+  }
   if(mode==='passage'){
     document.getElementById('mob-sheet-title').textContent='책 선택 / Select Book';
     pendingBook=null;
@@ -426,8 +597,8 @@ function render(koData,esvData,bk,ch){
   kv.forEach(function(v){
     const n=v.verse,er=en[n]||'';
     if(headings[n])h+='<div class="shead-row"><div class="ko-side"></div><div class="en-side"><div class="shead">'+esc(headings[n])+'</div></div></div>';
-    const eh=er.replace(/\((\d+)\)/g,function(_,x){return '<sup class="fn-ref" onclick="scrollToFn(\'fn-'+x+'\')">'+x+'</sup>';});
-    const kh=v.text.replace(/\(KN:(\d+)\)/g,function(_,x){return '<sup class="fn-ref" onclick="scrollToFn(\'ko-fn-'+x+'\')">'+x+'</sup>';});
+    const eh=er.replace(/\((\d+)\)/g,function(_,x){return '<sup class="fn-ref" onclick="showFnByRef(\'fn-'+x+'\',event)">'+x+'</sup>';});
+    const kh=v.text.replace(/\(KN:(\d+)\)/g,function(_,x){return '<sup class="fn-ref" onclick="showFnByRef(\'ko-fn-'+x+'\',event)">'+x+'</sup>';});
     h+='<div class="verse-row" id="vr-'+n+'"><div class="verse-cell ko-side"><span class="vn">'+n+'</span><span class="vt" style="font-size:'+fs+'px">'+kh+'</span></div><div class="verse-cell en-side"><span class="vn">'+n+'</span><span class="vt" style="font-size:'+fs+'px">'+eh+'</span></div></div>';
   });
   const vm={};
@@ -466,6 +637,7 @@ function render(koData,esvData,bk,ch){
   }
   document.getElementById('content').innerHTML=h;
   if(langOrder==='en-ko') applyLangOrder();
+  setTimeout(progAttachObserver,100);
 }
 (function(){
   const main=document.getElementById('main');
@@ -505,6 +677,76 @@ function render(koData,esvData,bk,ch){
     }
   },{passive:true});
 })();
+
+// Footnote inline popup
+(function(){
+  var popup = null;
+  var hideTimer = null;
+
+  function getPopup(){
+    if(!popup) popup = document.getElementById('fn-popup');
+    return popup;
+  }
+
+  function showFnPopup(e, text){
+    var p = getPopup();
+    if(!p) return;
+    clearTimeout(hideTimer);
+    p.textContent = text;
+    p.style.display = 'block';
+    p.style.opacity = '1';
+
+    // Position near the tap/click point
+    var x = e.clientX || (e.touches && e.touches[0] && e.touches[0].clientX) || 0;
+    var y = e.clientY || (e.touches && e.touches[0] && e.touches[0].clientY) || 0;
+
+    var pw = 280, ph = 80;
+    var vw = window.innerWidth, vh = window.innerHeight;
+
+    // Prefer above the tap point
+    var top = y - ph - 12;
+    if(top < 8) top = y + 20;
+    var left = x - pw/2;
+    if(left < 8) left = 8;
+    if(left + pw > vw - 8) left = vw - pw - 8;
+
+    p.style.left = left + 'px';
+    p.style.top = top + 'px';
+
+    // Auto-hide after 3s
+    hideTimer = setTimeout(hideFnPopup, 3000);
+  }
+
+  function hideFnPopup(){
+    var p = getPopup();
+    if(p){ p.style.opacity = '0'; setTimeout(function(){ p.style.display='none'; }, 150); }
+  }
+
+  // Intercept scrollToFn calls — instead show popup
+  window._fnData = {};
+
+  window.showFnByRef = function(id, e){
+    e.preventDefault();
+    e.stopPropagation();
+    var el = document.getElementById(id);
+    if(el){
+      // Get the text content of the footnote item
+      var span = el.querySelector('span:last-child');
+      var text = span ? span.textContent : '';
+      if(text) showFnPopup(e, text);
+      else scrollToFn(id); // fallback
+    } else {
+      scrollToFn(id);
+    }
+  };
+
+  // Hide popup on any scroll or tap outside
+  document.getElementById('main').addEventListener('scroll', hideFnPopup, {passive:true});
+  document.addEventListener('click', function(e){
+    if(!e.target.classList.contains('fn-ref')) hideFnPopup();
+  });
+})();
+
 function scrollToVerse(n){var el=document.getElementById('vr-'+n),m=document.getElementById('main');if(el&&m)m.scrollTop+=el.getBoundingClientRect().top-m.getBoundingClientRect().top-20;}
 function scrollToFn(id){var el=document.getElementById(id),m=document.getElementById('main');if(el&&m)m.scrollTop+=el.getBoundingClientRect().top-m.getBoundingClientRect().top-20;}
 function esc(s){return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
