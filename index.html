@@ -25,8 +25,10 @@ select{appearance:none;background:#efecea;border:1px solid #d8d4ce;border-radius
 .fctl>span{font-size:11px;color:#bbb;margin-right:2px}
 .fbtn{background:#efecea;border:1px solid #d8d4ce;border-radius:5px;color:#666;cursor:pointer;font-size:12px;font-weight:500;width:26px;height:26px;display:flex;align-items:center;justify-content:center;user-select:none}
 main{flex:1;overflow-y:auto;overflow-x:hidden;min-height:0;background:var(--bg);max-width:100%}
-main::-webkit-scrollbar{width:4px}
-main::-webkit-scrollbar-thumb{background:#d8d4ce;border-radius:4px}
+main::-webkit-scrollbar{width:8px}
+main::-webkit-scrollbar-track{background:#f0ede8}
+main::-webkit-scrollbar-thumb{background:#c8c4be;border-radius:4px}
+main::-webkit-scrollbar-thumb:hover{background:#aaa49e}
 .col-headers{display:grid;grid-template-columns:1fr 1fr;position:sticky;top:0;z-index:10;background:var(--bg);border-bottom:1px solid #e8e5e0;overflow:hidden}
 .col-hdr{padding:14px 28px;display:flex;align-items:baseline;justify-content:space-between}
 .col-hdr:first-child{border-right:1px solid #e8e5e0}
