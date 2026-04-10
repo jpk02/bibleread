@@ -179,19 +179,20 @@ body.dark .fn-popup{background:#2a2a2a;border-color:#444;color:#ccc}
 .votd-wrap{display:flex;flex-direction:column;align-items:center;justify-content:center;padding:32px 20px;min-height:60vh}
 .votd-card{background:#fff;border-radius:20px;padding:28px 24px 24px;max-width:420px;width:100%;box-shadow:0 2px 20px rgba(0,0,0,.07);display:flex;flex-direction:column}
 body.dark .votd-card{background:#242424;box-shadow:0 2px 20px rgba(0,0,0,.3)}
-.votd-label{font-size:10px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:#93c5fd;margin-bottom:18px}
-body.dark .votd-label{color:#7dd3fc}
-.votd-ko-ref{font-family:'Noto Sans KR',sans-serif;font-size:11px;font-weight:600;color:#aaa;margin-bottom:5px}
-.votd-ko{font-family:'Noto Sans KR',sans-serif;font-size:18px;line-height:1.85;color:#1c1c1c;word-break:keep-all;margin-bottom:20px}
+.votd-label{font-size:10px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:#1b2a4a;margin-bottom:18px}
+body.dark .votd-label{color:#8899bb}
+
+.votd-ko-ref{font-family:‘Noto Sans KR’,sans-serif;font-size:11px;font-weight:600;color:#aaa;margin-bottom:5px}
+.votd-ko{font-family:‘Noto Sans KR’,sans-serif;font-size:18px;line-height:1.85;color:#1c1c1c;word-break:keep-all;margin-bottom:20px}
 body.dark .votd-ko{color:#e8e5e0}
 .votd-divider{height:1px;background:#f0ede8;margin-bottom:18px}
 body.dark .votd-divider{background:#333}
 .votd-en-ref{font-size:11px;font-weight:600;color:#aaa;margin-bottom:5px}
 .votd-en{font-size:15px;line-height:1.75;color:#555;font-style:italic;margin-bottom:24px}
 body.dark .votd-en{color:#999}
-.votd-read-btn{align-self:flex-start;background:#2563eb;border:none;border-radius:10px;color:#fff;cursor:pointer;font:500 13px inherit;padding:9px 20px}
+.votd-read-btn{align-self:flex-start;background:#1b2a4a;border:none;border-radius:10px;color:#fff;cursor:pointer;font:500 13px inherit;padding:9px 20px}
 .votd-read-btn:active{opacity:.85}
-body.dark .votd-read-btn{background:#1d4ed8}
+body.dark .votd-read-btn{background:#2a3d66}
 .verse-row.hl-selected .vt{text-decoration:underline;text-decoration-style:dashed;text-decoration-color:#888;text-decoration-thickness:2px;text-underline-offset:4px}
 .hl-bar{position:fixed;bottom:0;left:0;right:0;z-index:300;background:#fff;border-top:1px solid #e8e5e0;padding:14px 28px env(safe-area-inset-bottom);display:flex;align-items:center;gap:16px;transform:translateY(100%);transition:transform 0.25s cubic-bezier(0.25,0.46,0.45,0.94)}
 .hl-bar.visible{transform:translateY(0)}
@@ -462,7 +463,14 @@ async function loadVotd(){
     }
     html+='<div class="votd-en-ref">'+ref+'</div>';
     html+='<div class="votd-en">'+v.text+'</div>';
-    if(bookIdx>=0){var chRef=v.bookname+' '+v.chapter;html+='<button class="votd-read-btn" onclick="bi='+bookIdx+';ci='+v.chapter+';loaded=true;updateLabel();load()">Read '+chRef+' →</button>';}
+    if(bookIdx>=0){
+      var chRef=v.bookname+' '+v.chapter;
+      var koChRef=BOOKS[bookIdx].ko+' '+v.chapter+'장';
+      html+='<button class="votd-read-btn" onclick="bi='+bookIdx+';ci='+v.chapter+';loaded=true;updateLabel();load()">'
+        +'<span class="votd-btn-ko" style="'+(langOrder==='en-ko'?'display:none':'')+'">'+koChRef+' 읽기 →</span>'
+        +'<span class="votd-btn-en" style="'+(langOrder==='ko-en'?'display:none':'')+'">Read '+chRef+' →</span>'
+        +'</button>';
+    }
     html+='</div></div>';
     document.getElementById('content').innerHTML=html;
   }catch(e){document.getElementById('content').innerHTML='';}
