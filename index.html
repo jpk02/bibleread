@@ -6,7 +6,7 @@
 <title>krengbible.com</title>
 <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,400&display=swap" rel="stylesheet">
 <style>
-:root{--fs:15px;--bg:#f7f5f2}
+:root{--fs:15px;--bg:#f7f5f2;--ko-order:1;--en-order:2}
 *{box-sizing:border-box;margin:0;padding:0;max-width:100%}
 html,body{height:100%;overflow-x:hidden}html{overscroll-behavior-y:none}body{overscroll-behavior-y:none}
 body{font-family:'DM Sans',-apple-system,sans-serif;background:var(--bg);color:#111;display:flex;flex-direction:column;height:100%;-webkit-font-smoothing:antialiased}
@@ -24,6 +24,7 @@ select{appearance:none;background:#efecea;border:1px solid #d8d4ce;border-radius
 .fctl{margin-left:auto;display:flex;align-items:center;gap:3px}
 .fctl>span{font-size:11px;color:#bbb;margin-right:2px}
 .fbtn{background:#efecea;border:1px solid #d8d4ce;border-radius:5px;color:#666;cursor:pointer;font-size:12px;font-weight:500;width:26px;height:26px;display:flex;align-items:center;justify-content:center;user-select:none}
+#lang-toggle{width:36px;font-size:14px}
 main{flex:1;overflow-y:scroll;overflow-x:hidden;min-height:0;background:var(--bg);max-width:100%;scrollbar-gutter:stable}
 main::-webkit-scrollbar{width:10px}
 main::-webkit-scrollbar-track{background:#eae7e2}
@@ -129,6 +130,9 @@ footer{border-top:1px solid #e8e5e0;color:#bbb;background:var(--bg);font-size:10
 #passage-input{flex:1;max-width:400px;background:#efecea;border:1px solid #d8d4ce;border-radius:6px;color:#111;font:14px inherit;padding:6px 12px;outline:none;min-width:0}
 #passage-input:focus{border-color:#555;background:#fff}
 #passage-input::placeholder{color:#bbb}
+
+.ko-side{order:var(--ko-order)}
+.en-side{order:var(--en-order)}
 </style>
 </head>
 <body>
@@ -137,6 +141,7 @@ footer{border-top:1px solid #e8e5e0;color:#bbb;background:var(--bg);font-size:10
 </header>
 <nav>
   <input id="passage-input" class="desk-only" type="text" placeholder="" autocomplete="off" spellcheck="false">
+  <button class="fbtn desk-only" id="lang-toggle" onclick="toggleLang()" title="Swap language order">⇄</button>
   <div class="fctl desk-only">
     <span>A</span>
     <button class="fbtn" id="fminus" type="button">&#8722;</button>
@@ -149,6 +154,7 @@ footer{border-top:1px solid #e8e5e0;color:#bbb;background:var(--bg);font-size:10
     </button>
     <div class="mob-nav-actions">
       <button class="mob-icon-btn" onclick="sheetOpen('font')">A</button>
+      <button class="mob-icon-btn" id="mob-lang-btn" onclick="toggleLangOrder()" title="언어 순서">한↕</button>
     </div>
   </div>
 </nav>
@@ -168,7 +174,7 @@ footer{border-top:1px solid #e8e5e0;color:#bbb;background:var(--bg);font-size:10
 <script>
 const WORKER='https://bibleread.pauljkim22.workers.dev';
 const BOOKS=[{ko:"창세기",en:"Genesis",n:1,ch:50},{ko:"출애굽기",en:"Exodus",n:2,ch:40},{ko:"레위기",en:"Leviticus",n:3,ch:27},{ko:"민수기",en:"Numbers",n:4,ch:36},{ko:"신명기",en:"Deuteronomy",n:5,ch:34},{ko:"여호수아",en:"Joshua",n:6,ch:24},{ko:"사사기",en:"Judges",n:7,ch:21},{ko:"룻기",en:"Ruth",n:8,ch:4},{ko:"사무엘상",en:"1 Samuel",n:9,ch:31},{ko:"사무엘하",en:"2 Samuel",n:10,ch:24},{ko:"열왕기상",en:"1 Kings",n:11,ch:22},{ko:"열왕기하",en:"2 Kings",n:12,ch:25},{ko:"역대상",en:"1 Chronicles",n:13,ch:29},{ko:"역대하",en:"2 Chronicles",n:14,ch:36},{ko:"에스라",en:"Ezra",n:15,ch:10},{ko:"느헤미야",en:"Nehemiah",n:16,ch:13},{ko:"에스더",en:"Esther",n:17,ch:10},{ko:"욥기",en:"Job",n:18,ch:42},{ko:"시편",en:"Psalms",n:19,ch:150},{ko:"잠언",en:"Proverbs",n:20,ch:31},{ko:"전도서",en:"Ecclesiastes",n:21,ch:12},{ko:"아가",en:"Song of Solomon",n:22,ch:8},{ko:"이사야",en:"Isaiah",n:23,ch:66},{ko:"예레미야",en:"Jeremiah",n:24,ch:52},{ko:"예레미야애가",en:"Lamentations",n:25,ch:5},{ko:"에스겔",en:"Ezekiel",n:26,ch:48},{ko:"다니엘",en:"Daniel",n:27,ch:12},{ko:"호세아",en:"Hosea",n:28,ch:14},{ko:"요엘",en:"Joel",n:29,ch:3},{ko:"아모스",en:"Amos",n:30,ch:9},{ko:"오바댜",en:"Obadiah",n:31,ch:1},{ko:"요나",en:"Jonah",n:32,ch:4},{ko:"미가",en:"Micah",n:33,ch:7},{ko:"나훔",en:"Nahum",n:34,ch:3},{ko:"하박국",en:"Habakkuk",n:35,ch:3},{ko:"스바냐",en:"Zephaniah",n:36,ch:3},{ko:"학개",en:"Haggai",n:37,ch:2},{ko:"스가랴",en:"Zechariah",n:38,ch:14},{ko:"말라기",en:"Malachi",n:39,ch:4},{ko:"마태복음",en:"Matthew",n:40,ch:28},{ko:"마가복음",en:"Mark",n:41,ch:16},{ko:"누가복음",en:"Luke",n:42,ch:24},{ko:"요한복음",en:"John",n:43,ch:21},{ko:"사도행전",en:"Acts",n:44,ch:28},{ko:"로마서",en:"Romans",n:45,ch:16},{ko:"고린도전서",en:"1 Corinthians",n:46,ch:16},{ko:"고린도후서",en:"2 Corinthians",n:47,ch:13},{ko:"갈라디아서",en:"Galatians",n:48,ch:6},{ko:"에베소서",en:"Ephesians",n:49,ch:6},{ko:"빌립보서",en:"Philippians",n:50,ch:4},{ko:"골로새서",en:"Colossians",n:51,ch:4},{ko:"데살로니가전서",en:"1 Thessalonians",n:52,ch:5},{ko:"데살로니가후서",en:"2 Thessalonians",n:53,ch:3},{ko:"디모데전서",en:"1 Timothy",n:54,ch:6},{ko:"디모데후서",en:"2 Timothy",n:55,ch:4},{ko:"디도서",en:"Titus",n:56,ch:3},{ko:"빌레몬서",en:"Philemon",n:57,ch:1},{ko:"히브리서",en:"Hebrews",n:58,ch:13},{ko:"야고보서",en:"James",n:59,ch:5},{ko:"베드로전서",en:"1 Peter",n:60,ch:5},{ko:"베드로후서",en:"2 Peter",n:61,ch:3},{ko:"요한일서",en:"1 John",n:62,ch:5},{ko:"요한이서",en:"2 John",n:63,ch:1},{ko:"요한삼서",en:"3 John",n:64,ch:1},{ko:"유다서",en:"Jude",n:65,ch:1},{ko:"요한계시록",en:"Revelation",n:66,ch:22}];
-let bi=42,ci=3,fs=15,pendingBook=null,loaded=false;
+let bi=42,ci=3,fs=15,pendingBook=null,loaded=false,koFirst=true;
 (function(){
   applyFs();
   document.getElementById('fminus').addEventListener('click',()=>{fs=Math.max(11,fs-1);applyFs();});
@@ -222,6 +228,21 @@ function step(d){
   load();
 }
 
+
+function toggleLang(){
+  koFirst=!koFirst;
+  document.getElementById('lang-toggle').textContent=koFirst?'⇄':'⇄';
+  document.getElementById('lang-toggle').title=koFirst?'Korean | English':'English | Korean';
+  // Swap column order via CSS
+  if(koFirst){
+    document.documentElement.style.setProperty('--ko-order','1');
+    document.documentElement.style.setProperty('--en-order','2');
+  } else {
+    document.documentElement.style.setProperty('--ko-order','2');
+    document.documentElement.style.setProperty('--en-order','1');
+  }
+}
+
 function parseAndLoad(raw){
   if(!raw) return;
   // Try to match "BookName Chapter" or "BookName Chapter:Verse"
@@ -260,6 +281,34 @@ function parseAndLoad(raw){
   bi=idx;
   ci=Math.min(Math.max(1,chNum),BOOKS[idx].ch);
   load();
+}
+
+
+function toggleLangOrder(){
+  langOrder = langOrder==='ko-en' ? 'en-ko' : 'ko-en';
+  const btn = document.getElementById('mob-lang-btn');
+  if(btn) btn.textContent = langOrder==='ko-en' ? '한↕' : '영↕';
+  // Re-render if loaded
+  if(loaded) applyLangOrder();
+}
+function applyLangOrder(){
+  const rows = document.querySelectorAll('.verse-row');
+  rows.forEach(function(row){
+    const ko = row.querySelector('.ko-side');
+    const en = row.querySelector('.en-side');
+    if(!ko||!en) return;
+    if(langOrder==='en-ko'){
+      row.style.display='flex';
+      row.style.flexDirection='column';
+      en.style.order='1';
+      ko.style.order='2';
+    } else {
+      row.style.display='';
+      row.style.flexDirection='';
+      en.style.order='';
+      ko.style.order='';
+    }
+  });
 }
 
 function sheetOpen(mode){
@@ -381,6 +430,7 @@ function render(koData,esvData,bk,ch){
     h+='<div class="fn-row"><div class="ko-side">'+kh2+'</div><div class="en-side">'+eh2+'</div></div>';
   }
   document.getElementById('content').innerHTML=h;
+  if(langOrder==='en-ko') applyLangOrder();
 }
 (function(){
   const main=document.getElementById('main');
