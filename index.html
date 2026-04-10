@@ -54,7 +54,7 @@ sup.fn-ref{font-size:9px;color:#2563eb;margin-left:1px;vertical-align:super;line
 .footnotes{padding:20px 28px 40px;border-top:1px solid #e8e5e0;margin-top:4px}
 .footnotes .fn-title{font-size:10px;font-weight:600;letter-spacing:.07em;text-transform:uppercase;color:#bbb;margin-bottom:10px}
 .fn-item{display:flex;gap:8px;font-size:12px;color:#777;line-height:1.6;margin-bottom:3px;border-radius:4px;padding:4px 2px}
-.fn-back-btn{background:none;border:none;color:#2563eb;font:600 10px inherit;cursor:pointer;padding:2px 4px;border-radius:4px;min-width:28px;text-align:left;line-height:1.4;flex-shrink:0}
+.fn-back-btn{background:none;border:none;color:#2563eb;font-size:12px;font-weight:600;font-family:inherit;cursor:pointer;padding:2px 4px;border-radius:4px;min-width:24px;text-align:left;line-height:1.4;flex-shrink:0}
 .fn-n{color:#94a3b8;font-size:9px;font-weight:600;flex-shrink:0;padding-top:3px}
 .ldg{display:flex;flex-direction:column;align-items:center;gap:12px;padding:64px 20px}
 @keyframes spin{to{transform:rotate(360deg)}}
@@ -260,7 +260,7 @@ async function load(){
   loaded=true;document.getElementById('main').scrollTop=0;updateLabel();
 }
 async function fetchKo(bk,ch){
-  const r=await fetch(WORKER+'/nkrv/'+bk.n+'/'+ch);
+  const r=await fetch(WORKER+'/nkrv/'+bk.n+'/'+ch,{cache:'no-store'});
   if(!r.ok)throw new Error('Worker error '+r.status);
   const d=await r.json();
   if(d.error)throw new Error(d.error);
