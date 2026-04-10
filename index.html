@@ -84,7 +84,7 @@ body.dark .mob-icon-btn{color:#aaa}
 .mob-sheet{position:fixed;inset:0;z-index:100;background:rgba(0,0,0,.4);display:flex;align-items:flex-end}
 .mob-sheet.hidden{display:none}
 .mob-sheet-inner{background:var(--bg);border-radius:16px 16px 0 0;width:100%;max-height:85vh;display:flex;flex-direction:column;overflow:hidden}
-.mob-sheet-hdr{display:flex;align-items:center;justify-content:space-between;padding:12px 20px 12px 24px;flex-shrink:0;border-bottom:1px solid #e8e5e0}
+.mob-sheet-hdr{display:flex;align-items:center;justify-content:space-between;padding:12px 20px;flex-shrink:0;border-bottom:1px solid #e8e5e0}
 .mob-sheet-hdr span{font-size:14px;font-weight:500;color:#222}
 .mob-sheet-close{background:#efecea;border:none;border-radius:50%;width:36px;height:36px;min-width:36px;font-size:15px;color:#444;display:flex;align-items:center;justify-content:center;cursor:pointer;font-weight:500;flex-shrink:0;margin-right:4px}
 #mob-sheet-body{overflow-y:auto;flex:1}
@@ -142,7 +142,7 @@ body.dark #passage-input::placeholder{color:#555}
 body.dark .edge-btn{background:rgba(30,30,30,0.85);border-color:#444;color:#aaa}
 body.dark main::-webkit-scrollbar-track{background:#222}
 body.dark main::-webkit-scrollbar-thumb{background:#444}
-.prog-books{display:grid;grid-template-columns:repeat(2,1fr);gap:6px;padding:4px 16px 8px}
+.prog-books{display:grid;grid-template-columns:repeat(2,1fr);gap:6px;padding:4px 20px 8px}
 .prog-testament-title{font-size:11px;font-weight:600;letter-spacing:.07em;text-transform:uppercase;color:#bbb;margin-bottom:10px}
 .prog-bar-row{display:flex;align-items:center;gap:10px;margin-bottom:8px}
 .prog-bar-label{font-size:12px;color:#777;width:60px;flex-shrink:0}
@@ -157,7 +157,7 @@ body.dark main::-webkit-scrollbar-thumb{background:#444}
 .ko-book-primary{font-size:14px;font-weight:500}
 .prog-book-ko{font-family:'Noto Sans KR',sans-serif;font-size:11px;color:#666;margin-top:1px}
 .prog-book-pct{font-size:10px;color:#2563eb;margin-top:3px}
-.prog-chapters{display:grid;grid-template-columns:repeat(6,1fr);gap:5px;padding:16px}
+.prog-chapters{display:grid;grid-template-columns:repeat(6,1fr);gap:5px;padding:16px 20px}
 .prog-ch{aspect-ratio:1;display:flex;align-items:center;justify-content:center;border-radius:6px;font-size:12px;cursor:pointer;position:relative}
 .prog-ch.unread{background:#efecea;color:#555}
 .prog-ch.auto{background:#2563eb;color:#fff}
@@ -419,9 +419,9 @@ function progShowOverview(){
   function bookStats(books,si){var t=0,r=0;books.forEach(function(b,i){t+=b.ch;for(var c=1;c<=b.ch;c++)if(data[progKey(si+i,c)])r++;});return{total:t,read:r};}
   var otS=bookStats(OT,0),ntS=bookStats(NT,39);
   var html='<div style="padding:0">';
-  html+='<div class="prog-testament" style="padding:8px 16px 0"><div class="prog-testament-title">'+(langOrder==='en-ko'?'Old Testament / 구약':'구약 / Old Testament')+'</div>';
+  html+='<div class="prog-testament" style="padding:8px 20px 0"><div class="prog-testament-title">'+(langOrder==='en-ko'?'Old Testament / 구약':'구약 / Old Testament')+'</div>';
   html+='<div class="prog-bar-row"><span class="prog-bar-label">'+otS.read+'/'+otS.total+'</span><div class="prog-bar-track"><div class="prog-bar-fill" style="width:'+Math.round(otS.read/otS.total*100)+'%"></div></div><span class="prog-bar-pct">'+Math.round(otS.read/otS.total*100)+'%</span></div></div>';
-  html+='<div class="prog-testament" style="padding:0 16px 0"><div class="prog-testament-title">'+(langOrder==='en-ko'?'New Testament / 신약':'신약 / New Testament')+'</div>';
+  html+='<div class="prog-testament" style="padding:0 20px 0"><div class="prog-testament-title">'+(langOrder==='en-ko'?'New Testament / 신약':'신약 / New Testament')+'</div>';
   html+='<div class="prog-bar-row"><span class="prog-bar-label">'+ntS.read+'/'+ntS.total+'</span><div class="prog-bar-track"><div class="prog-bar-fill" style="width:'+Math.round(ntS.read/ntS.total*100)+'%"></div></div><span class="prog-bar-pct">'+Math.round(ntS.read/ntS.total*100)+'%</span></div></div></div>';
   html+='<div class="prog-books">';
   BOOKS.forEach(function(b,i){
@@ -435,16 +435,16 @@ function progShowOverview(){
   });
   html+='</div>';
   var rl=langOrder==='ko-en'?'초기화 / Reset All':'Reset All / 초기화';
-  html+='<div style="display:flex;justify-content:center;padding:16px"><button onclick="progReset()" style="background:#efecea;border:1px solid #d8d4ce;color:#666;font:500 12px inherit;cursor:pointer;padding:6px 20px;border-radius:6px;font-family:inherit">'+rl+'</button></div>';
+  html+='<div style="display:flex;justify-content:center;padding:16px 20px"><button onclick="progReset()" style="background:#efecea;border:1px solid #d8d4ce;color:#666;font:500 12px inherit;cursor:pointer;padding:6px 20px;border-radius:6px;font-family:inherit">'+rl+'</button></div>';
   document.getElementById('mob-sheet-body').innerHTML=html;
 }
 function progShowBook(idx){
   progView='book';progViewBook=idx;
   var b=BOOKS[idx];
   document.getElementById('mob-sheet-title').textContent=langOrder==='en-ko'?b.en+' '+b.ko:b.ko+' '+b.en;
-  var data=progLoad(),html='<div style="padding:12px 16px 4px"><button class="prog-back-btn" onclick="progShowOverview()">← Back</button></div><div class="prog-chapters">';
+  var data=progLoad(),html='<div style="padding:12px 20px 4px"><button class="prog-back-btn" onclick="progShowOverview()">← Back</button></div><div class="prog-chapters">';
   for(var c=1;c<=b.ch;c++){var k=progKey(idx,c),entry=data[k],cls=entry?(entry.source==='auto'?'auto':'manual'):'unread';html+='<div class="prog-ch '+cls+'" onclick="progToggleManual('+idx+','+c+')" title="'+(entry?entry.date+' ('+entry.source+')':'Tap to mark read')+'">'+c+'</div>';}
-  html+='</div><div style="padding:8px 16px;font-size:11px;color:#bbb">● Auto-detected &nbsp; Tap to toggle manual</div>';
+  html+='</div><div style="padding:8px 20px;font-size:11px;color:#bbb">● Auto-detected &nbsp; Tap to toggle manual</div>';
   document.getElementById('mob-sheet-body').innerHTML=html;
 }
 async function loadVotd(){
