@@ -190,7 +190,18 @@ body.dark .prog-bar-pct{color:#aaa}
 body.dark .prog-ch.unread{background:#2a2a2a;color:#999}
 body.dark .prog-bar-track{background:#2a2a2a}
 body.dark .prog-back-btn{color:#60a5fa}
-.fn-popup{position:fixed;z-index:200;background:#fff;border:1px solid #e8e5e0;border-radius:8px;padding:10px 14px;max-width:280px;font-size:12px;color:#444;line-height:1.6;box-shadow:0 4px 16px rgba(0,0,0,.12);pointer-events:none;transition:opacity .15s}
+.ch-tabs{display:flex;gap:0;border-bottom:1px solid #e8e5e0;margin:0 14px;flex-shrink:0}
+.ch-tab{background:none;border:none;font:500 13px inherit;color:#999;padding:8px 14px;cursor:pointer;border-bottom:2px solid transparent;margin-bottom:-1px}
+.ch-tab.active{color:#1b2a4a;border-bottom-color:#1b2a4a}
+body.dark .ch-tab.active{color:#e8e5e0;border-bottom-color:#e8e5e0}
+.commentary-wrap{padding:20px 20px 40px;max-width:680px}
+.commentary-section{margin-bottom:24px}
+.commentary-label{font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:#1b2a4a;margin-bottom:6px}
+body.dark .commentary-label{color:#8899bb}
+.commentary-ko{font-family:'Noto Sans KR',sans-serif;font-size:15px;line-height:1.85;color:#1c1c1c;margin-bottom:8px;word-break:keep-all}
+.commentary-en{font-size:14px;line-height:1.75;color:#555;font-style:italic}
+body.dark .commentary-ko{color:#e8e5e0}
+body.dark .commentary-en{color:#999};z-index:200;background:#fff;border:1px solid #e8e5e0;border-radius:8px;padding:10px 14px;max-width:280px;font-size:12px;color:#444;line-height:1.6;box-shadow:0 4px 16px rgba(0,0,0,.12);pointer-events:none;transition:opacity .15s}
 body.dark .fn-popup{background:#2a2a2a;border-color:#444;color:#ccc}
 .votd-wrap{display:flex;flex-direction:column;align-items:center;justify-content:center;padding:32px 20px;min-height:60vh}
 .votd-card{background:#fff;border-radius:20px;padding:28px 24px 24px;max-width:420px;width:100%;box-shadow:0 2px 20px rgba(0,0,0,.07);display:flex;flex-direction:column}
@@ -554,8 +565,8 @@ function sheetOpen(mode){
     h+='</div>';
     body.innerHTML=h;
     setTimeout(function(){
-      var activeChapter=body.querySelector('.mob-ch-item.active');
-      if(activeChapter) activeChapter.scrollIntoView({block:'center'});
+      var activeRow=body.querySelector('.mob-book-row.active');
+      if(activeRow) activeRow.scrollIntoView({block:'start'});
     },50);
   } else {
     document.getElementById('mob-sheet-title').textContent=langOrder==='en-ko'?'Font Size / 글자 크기':'글자 크기 / Font Size';
@@ -634,6 +645,10 @@ function render(koData,esvData,bk,ch){
   var koTitle='<div class="ko-side" style="order:'+(langOrder==='ko-en'?1:2)+'"><div class="ch-title">'+bk.ko+' '+ch+'장</div></div>';
   var enTitle='<div class="en-side" style="order:'+(langOrder==='ko-en'?2:1)+'"><div class="ch-title">'+bk.en+' '+ch+'</div></div>';
   h+='<div class="title-row">'+koTitle+'<span class="title-sep">/</span>'+enTitle+'</div>';
+  // Tab bar
+  var tl1=langOrder==='ko-en'?'본문':'Text', tl2=langOrder==='ko-en'?'해설':'Commentary';
+  h+='<div class="ch-tabs"><button class="ch-tab active" id="tab-text" onclick="switchTab(\'text\')">'+tl1+'</button><button class="ch-tab" id="tab-comm" onclick="switchTab(\'comm\')">'+tl2+'</button></div>';
+  h+='<div id="tab-text-content">';
   kv.forEach(function(v){
     var n=v.verse,er=en[n]||'';
     if(headings[n])h+='<div class="shead-row"><div class="ko-side"></div><div class="en-side"><div class="shead">'+esc(headings[n])+'</div></div></div>';
@@ -645,6 +660,8 @@ function render(koData,esvData,bk,ch){
   Object.keys(kf).forEach(function(k){fnHidden+='<div id="ko-fn-'+k+'"><span></span><span>'+esc(kf[k])+'</span></div>';});
   Object.keys(footnotes).forEach(function(k){fnHidden+='<div id="fn-'+k+'"><span></span><span>'+esc(footnotes[k])+'</span></div>';});
   fnHidden+='</div>';h+=fnHidden;
+  h+='</div>'; // end tab-text-content
+  h+='<div id="tab-comm-content" style="display:none"><div class="ldg"><div class="spinner"></div><div class="ldg-txt">Loading…</div></div></div>';
   document.getElementById('content').innerHTML=h;
   if(langOrder==='en-ko')applyLangOrder();
   setTimeout(progAttachObserver,500);
@@ -749,7 +766,50 @@ document.addEventListener('touchstart',function(e){
 },{passive:true});
 function scrollToVerse(n){var el=document.getElementById('vr-'+n),m=document.getElementById('main');if(el&&m)m.scrollTop+=el.getBoundingClientRect().top-m.getBoundingClientRect().top-20;}
 function scrollToFn(id){var el=document.getElementById(id),m=document.getElementById('main');if(el&&m)m.scrollTop+=el.getBoundingClientRect().top-m.getBoundingClientRect().top-20;}
-function esc(s){return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
+function switchTab(tab){
+  var tText=document.getElementById('tab-text-content');
+  var tComm=document.getElementById('tab-comm-content');
+  var btnText=document.getElementById('tab-text');
+  var btnComm=document.getElementById('tab-comm');
+  if(tab==='text'){
+    tText.style.display='';tComm.style.display='none';
+    btnText.classList.add('active');btnComm.classList.remove('active');
+  } else {
+    tText.style.display='none';tComm.style.display='';
+    btnText.classList.remove('active');btnComm.classList.add('active');
+    if(tComm.querySelector('.ldg')) loadCommentary();
+  }
+}
+async function loadCommentary(){
+  var bk=BOOKS[bi];
+  try{
+    var r=await fetch(WORKER+'/commentary/'+bk.n+'/'+ci);
+    if(!r.ok) throw new Error('Worker error '+r.status);
+    var d=await r.json();
+    if(d.error) throw new Error(d.error);
+    var sl=langOrder==='ko-en'?'요약':'Summary';
+    var cl=langOrder==='ko-en'?'역사적 배경':'Context';
+    var rl=langOrder==='ko-en'?'묵상':'Reflection';
+    var h='<div class="commentary-wrap">';
+    h+='<div class="commentary-section"><div class="commentary-label">'+sl+'</div>';
+    if(langOrder==='ko-en'){h+='<div class="commentary-ko">'+esc(d.summary_ko)+'</div><div class="commentary-en">'+esc(d.summary_en)+'</div>';}
+    else{h+='<div class="commentary-en">'+esc(d.summary_en)+'</div><div class="commentary-ko">'+esc(d.summary_ko)+'</div>';}
+    h+='</div>';
+    h+='<div class="commentary-section"><div class="commentary-label">'+cl+'</div>';
+    if(langOrder==='ko-en'){h+='<div class="commentary-ko">'+esc(d.context_ko)+'</div><div class="commentary-en">'+esc(d.context_en)+'</div>';}
+    else{h+='<div class="commentary-en">'+esc(d.context_en)+'</div><div class="commentary-ko">'+esc(d.context_ko)+'</div>';}
+    h+='</div>';
+    h+='<div class="commentary-section"><div class="commentary-label">'+rl+'</div>';
+    if(langOrder==='ko-en'){h+='<div class="commentary-ko">'+esc(d.reflection_ko)+'</div><div class="commentary-en">'+esc(d.reflection_en)+'</div>';}
+    else{h+='<div class="commentary-en">'+esc(d.reflection_en)+'</div><div class="commentary-ko">'+esc(d.reflection_ko)+'</div>';}
+    h+='</div></div>';
+    var tComm=document.getElementById('tab-comm-content');
+    if(tComm) tComm.innerHTML=h;
+  } catch(e){
+    var tComm=document.getElementById('tab-comm-content');
+    if(tComm) tComm.innerHTML='<div class="errbox">Commentary failed: '+esc(e.message)+'</div>';
+  }
+}
 document.addEventListener('keydown',function(e){if(e.target.tagName==='SELECT'||e.target.id==='passage-input')return;if(e.key==='ArrowRight')step(1);if(e.key==='ArrowLeft')step(-1);});
 </script>
 <div class="edge-nav left"><button class="edge-btn" id="edge-bp" onclick="step(-1)" disabled>&#8249;</button></div>
