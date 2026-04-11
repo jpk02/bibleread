@@ -1,5 +1,4 @@
 <!DOCTYPE html>
-
 <html lang="ko">
 <head>
 <meta charset="UTF-8">
@@ -24,6 +23,12 @@ main::-webkit-scrollbar-thumb{background:#b8b4ae;border-radius:10px;border:2px s
 main::-webkit-scrollbar-thumb:hover{background:#999590}
 .col-headers{display:none}
 .title-row{display:grid;grid-template-columns:1fr 1fr;padding:20px 0 12px}
+@media(max-width:640px){
+  .title-row{display:flex;flex-direction:row;align-items:baseline;gap:8px;padding:14px 14px 6px}
+  .title-row .ko-side,.title-row .en-side{padding:0;border:none!important}
+  .title-row .ch-title{font-size:16px}
+  .title-row .ko-side .ch-title::after{content:' /';color:#ccc;font-weight:400;margin-right:6px}
+}
 .ko-side{padding:0 28px;border-right:1px solid #e8e5e0}
 .en-side{padding:0 28px}
 .ch-title{font-size:17px;font-weight:600;color:#222;letter-spacing:-.02em}
@@ -88,13 +93,19 @@ body.dark .mob-icon-btn{color:#aaa}
 .mob-sheet-hdr span{font-size:14px;font-weight:500;color:#222}
 .mob-sheet-close{background:#efecea;border:none;border-radius:50%;width:36px;height:36px;min-width:36px;font-size:15px;color:#444;display:flex;align-items:center;justify-content:center;cursor:pointer;font-weight:500;flex-shrink:0;margin-right:4px}
 #mob-sheet-body{overflow-y:auto;flex:1}
-.mob-book-grid{display:grid;grid-template-columns:1fr 1fr}
-.mob-book-item{padding:13px 16px;font-size:14px;color:#222;border-bottom:.5px solid #f0ede8;cursor:pointer}
-.mob-book-item:active{background:#f0ede8}
-.mob-book-item.active{font-weight:600}
-.mob-book-item .ko{font-family:'Noto Sans KR',sans-serif;font-size:13px}
-.mob-book-item .en{font-size:11px;color:#999}
-.mob-ch-grid{display:grid;grid-template-columns:repeat(6,1fr);gap:6px;padding:16px}
+.mob-book-list{display:flex;flex-direction:column}
+.mob-book-row{border-bottom:.5px solid #f0ede8;cursor:pointer}
+.mob-book-row-hdr{display:flex;align-items:center;justify-content:space-between;padding:14px 20px}
+.mob-book-row-hdr .ko{font-family:'Noto Sans KR',sans-serif;font-size:15px;color:#222}
+.mob-book-row-hdr .en{font-size:12px;color:#999;margin-top:1px}
+.mob-book-row-hdr .names{display:flex;flex-direction:column}
+.mob-book-row-chevron{color:#ccc;font-size:12px;transition:transform 0.2s;flex-shrink:0}
+.mob-book-row-chevron.open{transform:rotate(180deg)}
+.mob-book-row.active .mob-book-row-hdr .ko{font-weight:700;color:#222}
+.mob-ch-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:8px;padding:4px 20px 16px}
+body.dark .mob-book-row{border-bottom-color:#2a2a2a}
+body.dark .mob-book-row-hdr .ko{color:#e8e5e0}
+body.dark .mob-book-row-hdr .en{color:#666}
 .mob-ch-item{aspect-ratio:1;display:flex;align-items:center;justify-content:center;border-radius:8px;font-size:14px;color:#222;background:#efecea;cursor:pointer}
 .mob-ch-item:active{background:#d8d4ce}
 .mob-ch-item.active{background:#222;color:#fff;font-weight:500}
@@ -149,14 +160,23 @@ body.dark main::-webkit-scrollbar-thumb{background:#444}
 .prog-bar-track{flex:1;height:6px;background:#efecea;border-radius:3px;overflow:hidden}
 .prog-bar-fill{height:100%;background:#2563eb;border-radius:3px;transition:width 0.3s}
 .prog-bar-pct{font-size:11px;color:#bbb;width:32px;text-align:right;flex-shrink:0}
-.prog-book{padding:10px 12px;background:#efecea;border-radius:8px;cursor:pointer}
-.prog-book:active{background:#e0dbd4}
-.prog-book.complete{background:#dbeafe}
-.prog-book.partial{background:#eff6ff}
-.prog-book-name{font-size:12px;font-weight:500;color:#222}
-.ko-book-primary{font-size:14px;font-weight:500}
-.prog-book-ko{font-family:'Noto Sans KR',sans-serif;font-size:11px;color:#666;margin-top:1px}
-.prog-book-pct{font-size:10px;color:#2563eb;margin-top:3px}
+.prog-book-list{display:flex;flex-direction:column}
+.prog-book-row{border-bottom:.5px solid #f0ede8;cursor:pointer}
+.prog-book-row-hdr{display:flex;align-items:center;padding:11px 20px;gap:12px}
+.prog-book-row-name{flex:1;min-width:0}
+.prog-book-row-primary{font-size:14px;font-weight:500;color:#222;font-family:'Noto Sans KR',sans-serif}
+.prog-book-row-secondary{font-size:11px;color:#999;margin-top:1px}
+.prog-book-row-right{display:flex;align-items:center;gap:8px;flex-shrink:0}
+.prog-book-row-pct{font-size:11px;color:#bbb;min-width:28px;text-align:right}
+.prog-book-mini-bar{width:48px;height:3px;background:#efecea;border-radius:2px;overflow:hidden}
+.prog-book-mini-fill{height:100%;background:#2563eb;border-radius:2px}
+.prog-book-row-chevron2{color:#ccc;transition:transform 0.2s}
+.prog-book-row-chevron2.open{transform:rotate(180deg)}
+.prog-book-row.complete .prog-book-row-primary{color:#2563eb}
+body.dark .prog-book-row{border-bottom-color:#2a2a2a}
+body.dark .prog-book-row-primary{color:#e8e5e0}
+body.dark .prog-book-row.complete .prog-book-row-primary{color:#60a5fa}
+body.dark .prog-book-mini-bar{background:#333}
 .prog-chapters{display:grid;grid-template-columns:repeat(6,1fr);gap:5px;padding:16px 20px}
 .prog-ch{aspect-ratio:1;display:flex;align-items:center;justify-content:center;border-radius:6px;font-size:12px;cursor:pointer;position:relative}
 .prog-ch.unread{background:#efecea;color:#555}
@@ -164,11 +184,6 @@ body.dark main::-webkit-scrollbar-thumb{background:#444}
 .prog-ch.manual{background:#1d4ed8;color:#fff}
 .prog-ch.auto::after{content:'';position:absolute;bottom:3px;right:3px;width:4px;height:4px;background:rgba(255,255,255,.6);border-radius:50%}
 .prog-back-btn{background:none;border:none;color:#2563eb;font:500 13px inherit;cursor:pointer;padding:4px 0}
-body.dark .prog-book{background:#2a2a2a}
-body.dark .prog-book.complete{background:#1e3a5f}
-body.dark .prog-book.partial{background:#1a2f4a}
-body.dark .prog-book-name{color:#e8e5e0}
-body.dark .prog-book-ko{color:#999}
 body.dark .prog-ch.unread{background:#2a2a2a;color:#999}
 body.dark .prog-bar-track{background:#2a2a2a}
 body.dark .prog-back-btn{color:#60a5fa}
@@ -180,8 +195,8 @@ body.dark .votd-card{background:#242424;box-shadow:0 2px 20px rgba(0,0,0,.3)}
 .votd-label{font-size:10px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:#1b2a4a;margin-bottom:18px}
 body.dark .votd-label{color:#8899bb}
 
-.votd-ko-ref{font-family:‘Noto Sans KR’,sans-serif;font-size:11px;font-weight:600;color:#aaa;margin-bottom:5px}
-.votd-ko{font-family:‘Noto Sans KR’,sans-serif;font-size:18px;line-height:1.85;color:#1c1c1c;word-break:keep-all;margin-bottom:20px}
+.votd-ko-ref{font-family:'Noto Sans KR',sans-serif;font-size:11px;font-weight:600;color:#aaa;margin-bottom:5px}
+.votd-ko{font-family:'Noto Sans KR',sans-serif;font-size:18px;line-height:1.85;color:#1c1c1c;word-break:keep-all;margin-bottom:20px}
 body.dark .votd-ko{color:#e8e5e0}
 .votd-divider{height:1px;background:#f0ede8;margin-bottom:18px}
 body.dark .votd-divider{background:#333}
@@ -231,7 +246,6 @@ body.dark .confirm-btn.cancel{background:#333;color:#bbb}
 .confirm-btn.ok{background:#222;color:#fff}
 body.dark .confirm-btn.ok{background:#e8e5e0;color:#111}
 </style>
-
 </head>
 <body>
 <header><div class="logo"><span>krengbible.com</span></div></header>
@@ -387,7 +401,30 @@ function progLoad(){try{return JSON.parse(localStorage.getItem(PROGRESS_KEY)||'{
 function progSave(d){try{localStorage.setItem(PROGRESS_KEY,JSON.stringify(d));}catch(e){}}
 function progKey(b,c){return b+'_'+c;}
 function progMarkRead(b,c,src){var d=progLoad(),k=progKey(b,c);if(!d[k]){d[k]={date:new Date().toISOString().slice(0,10),source:src};progSave(d);}}
-function progToggleManual(b,c){var d=progLoad(),k=progKey(b,c);if(d[k])delete d[k];else d[k]={date:new Date().toISOString().slice(0,10),source:'manual'};progSave(d);progShowBook(b);}
+function progToggleManual(b,c){
+  var d=progLoad(),k=progKey(b,c);
+  if(d[k])delete d[k];else d[k]={date:new Date().toISOString().slice(0,10),source:'manual'};
+  progSave(d);
+  // Refresh the inline chapter grid
+  var grid=document.getElementById('prog-ch-'+b);
+  if(grid&&grid.style.display!=='none'){
+    var bk=BOOKS[b],data=progLoad(),h='';
+    for(var ch=1;ch<=bk.ch;ch++){var ky=progKey(b,ch),entry=data[ky],cls=entry?(entry.source==='auto'?'auto':'manual'):'unread';h+='<div class="prog-ch '+cls+'" onclick="progToggleManual('+b+','+ch+')" title="'+(entry?entry.date:'Tap to mark read')+'">'+ch+'</div>';}
+    grid.innerHTML=h;
+  }
+  // Refresh mini bar
+  var row=document.getElementById('prog-row-'+b);
+  if(row){
+    var bk2=BOOKS[b],data2=progLoad(),rc=0;
+    for(var ch2=1;ch2<=bk2.ch;ch2++)if(data2[progKey(b,ch2)])rc++;
+    var pct=Math.round(rc/bk2.ch*100);
+    var fill=row.querySelector('.prog-book-mini-fill');
+    if(fill)fill.style.width=pct+'%';
+    var pctEl=row.querySelector('.prog-book-row-pct');
+    if(pctEl)pctEl.textContent=rc>0?pct+'%':'';
+    row.className='prog-book-row'+(rc===bk2.ch?' complete':rc>0?' partial':'');
+  }
+}
 var progObserver=null;
 function progAttachObserver(){
   if(progObserver){progObserver.disconnect();progObserver=null;}
@@ -423,14 +460,21 @@ function progShowOverview(){
   html+='<div class="prog-bar-row"><span class="prog-bar-label">'+otS.read+'/'+otS.total+'</span><div class="prog-bar-track"><div class="prog-bar-fill" style="width:'+Math.round(otS.read/otS.total*100)+'%"></div></div><span class="prog-bar-pct">'+Math.round(otS.read/otS.total*100)+'%</span></div></div>';
   html+='<div class="prog-testament" style="padding:0 20px 0"><div class="prog-testament-title">'+(langOrder==='en-ko'?'New Testament / 신약':'신약 / New Testament')+'</div>';
   html+='<div class="prog-bar-row"><span class="prog-bar-label">'+ntS.read+'/'+ntS.total+'</span><div class="prog-bar-track"><div class="prog-bar-fill" style="width:'+Math.round(ntS.read/ntS.total*100)+'%"></div></div><span class="prog-bar-pct">'+Math.round(ntS.read/ntS.total*100)+'%</span></div></div></div>';
-  html+='<div class="prog-books">';
+  html+='<div class="prog-book-list">';
   BOOKS.forEach(function(b,i){
     var rc=0;for(var c=1;c<=b.ch;c++)if(data[progKey(i,c)])rc++;
-    var cls=rc===b.ch?'complete':rc>0?'partial':'',pct=Math.round(rc/b.ch*100);
-    html+='<div class="prog-book '+cls+'" onclick="progShowBook('+i+')">';
-    if(langOrder==='en-ko'){html+='<div class="prog-book-name ko-book-primary">'+b.en+'</div><div class="prog-book-ko">'+b.ko+'</div>';}
-    else{html+='<div class="prog-book-name ko-book-primary">'+b.ko+'</div><div class="prog-book-ko">'+b.en+'</div>';}
-    if(rc>0)html+='<div class="prog-book-pct">'+rc+'/'+b.ch+' ('+pct+'%)</div>';
+    var pct=Math.round(rc/b.ch*100);
+    var cls=rc===b.ch?'complete':rc>0?'partial':'';
+    var p=langOrder==='en-ko'?b.en:b.ko, s=langOrder==='en-ko'?b.ko:b.en;
+    html+='<div class="prog-book-row '+cls+'" id="prog-row-'+i+'">';
+    html+='<div class="prog-book-row-hdr" onclick="toggleProgBook('+i+')">';
+    html+='<div class="prog-book-row-name"><div class="prog-book-row-primary">'+p+'</div><div class="prog-book-row-secondary">'+s+'</div></div>';
+    html+='<div class="prog-book-row-right">';
+    if(rc>0) html+='<div class="prog-book-row-pct">'+pct+'%</div>';
+    html+='<div class="prog-book-mini-bar"><div class="prog-book-mini-fill" style="width:'+pct+'%"></div></div>';
+    html+='<svg class="prog-book-row-chevron2" width="10" height="6" viewBox="0 0 10 6"><path fill="currentColor" d="M0 0l5 6 5-6z"/></svg>';
+    html+='</div></div>';
+    html+='<div class="prog-chapters" id="prog-ch-'+i+'" style="display:none"></div>';
     html+='</div>';
   });
   html+='</div>';
@@ -438,15 +482,23 @@ function progShowOverview(){
   html+='<div style="display:flex;justify-content:center;padding:16px 20px"><button onclick="progReset()" style="background:#efecea;border:1px solid #d8d4ce;color:#666;font:500 12px inherit;cursor:pointer;padding:6px 20px;border-radius:6px;font-family:inherit">'+rl+'</button></div>';
   document.getElementById('mob-sheet-body').innerHTML=html;
 }
-function progShowBook(idx){
-  progView='book';progViewBook=idx;
-  var b=BOOKS[idx];
-  document.getElementById('mob-sheet-title').textContent=langOrder==='en-ko'?b.en+' '+b.ko:b.ko+' '+b.en;
-  var data=progLoad(),html='<div style="padding:12px 20px 4px"><button class="prog-back-btn" onclick="progShowOverview()">← Back</button></div><div class="prog-chapters">';
-  for(var c=1;c<=b.ch;c++){var k=progKey(idx,c),entry=data[k],cls=entry?(entry.source==='auto'?'auto':'manual'):'unread';html+='<div class="prog-ch '+cls+'" onclick="progToggleManual('+idx+','+c+')" title="'+(entry?entry.date+' ('+entry.source+')':'Tap to mark read')+'">'+c+'</div>';}
-  html+='</div><div style="padding:8px 20px;font-size:11px;color:#bbb">'+(langOrder==='ko-en'?'● 자동감지 &nbsp; 탭하여 수동 설정':'● Auto-detected &nbsp; Tap to toggle manual')+'</div>';
-  document.getElementById('mob-sheet-body').innerHTML=html;
+function toggleProgBook(idx){
+  var grid=document.getElementById('prog-ch-'+idx);
+  var chevron=document.querySelector('#prog-row-'+idx+' .prog-book-row-chevron2');
+  var isOpen=grid.style.display!=='none';
+  if(isOpen){
+    grid.style.display='none';
+    if(chevron)chevron.classList.remove('open');
+  } else {
+    var b=BOOKS[idx],data=progLoad(),h='';
+    for(var c=1;c<=b.ch;c++){var k=progKey(idx,c),entry=data[k],cls=entry?(entry.source==='auto'?'auto':'manual'):'unread';h+='<div class="prog-ch '+cls+'" onclick="progToggleManual('+idx+','+c+')" title="'+(entry?entry.date:'Tap to mark read')+'">'+c+'</div>';}
+    grid.innerHTML=h;
+    grid.style.display='grid';
+    if(chevron)chevron.classList.add('open');
+    setTimeout(function(){grid.scrollIntoView({block:'nearest'});},50);
+  }
 }
+function progShowBook(idx){toggleProgBook(idx);}
 async function loadVotd(){
   var wrap=document.getElementById('content');
   wrap.innerHTML='<div class="ldg"><div class="spinner"></div><div class="ldg-txt">Loading…</div></div>';
@@ -485,14 +537,51 @@ function sheetOpen(mode){
   if(mode==='passage'){
     document.getElementById('mob-sheet-title').textContent=langOrder==='en-ko'?'Select Book / 책 선택':'책 선택 / Select Book';
     pendingBook=null;
-    var h='<div class="mob-book-grid">';
-    BOOKS.forEach(function(b,i){var p=langOrder==='en-ko'?b.en:b.ko,s=langOrder==='en-ko'?b.ko:b.en;h+='<div class="mob-book-item '+(loaded&&i===bi?'active':'')+'" onclick="sheetSelectBook('+i+')"><div class="ko">'+p+'</div><div class="en">'+s+'</div></div>';});
-    h+='</div>';body.innerHTML=h;
-    setTimeout(()=>body.querySelector('.active')?.scrollIntoView({block:'center'}),50);
+    var h='<div class="mob-book-list">';
+    BOOKS.forEach(function(b,i){
+      var p=langOrder==='en-ko'?b.en:b.ko,s=langOrder==='en-ko'?b.ko:b.en;
+      var isActive=loaded&&i===bi;
+      h+='<div class="mob-book-row'+(isActive?' active':'')+'" id="book-row-'+i+'">';
+      h+='<div class="mob-book-row-hdr" onclick="toggleBookRow('+i+')">';
+      h+='<div class="names"><div class="ko">'+p+'</div><div class="en">'+s+'</div></div>';
+      h+='<svg class="mob-book-row-chevron'+(isActive?' open':'')+'" width="12" height="8" viewBox="0 0 10 6"><path fill="currentColor" d="M0 0l5 6 5-6z"/></svg>';
+      h+='</div>';
+      h+='<div class="mob-ch-grid" id="ch-grid-'+i+'" style="'+(isActive?'':'display:none')+'">';
+      if(isActive){for(var c=1;c<=b.ch;c++)h+='<div class="mob-ch-item'+(c===ci?' active':'')+'" onclick="sheetSelectCh2('+i+','+c+')">'+c+'</div>';}
+      h+='</div></div>';
+    });
+    h+='</div>';
+    body.innerHTML=h;
+    setTimeout(function(){var a=body.querySelector('.mob-book-row.active');if(a)a.scrollIntoView({block:'center'});},50);
   } else {
     document.getElementById('mob-sheet-title').textContent=langOrder==='en-ko'?'Font Size / 글자 크기':'글자 크기 / Font Size';
     body.innerHTML='<div class="mob-font-sheet"><div class="mob-font-row"><button class="mob-font-btn" onclick="adjFont(-1)">−</button><div class="mob-font-preview">가 Aa — '+fs+'px</div><button class="mob-font-btn" onclick="adjFont(1)">+</button></div></div>';
   }
+}
+function toggleBookRow(idx){
+  var body=document.getElementById('mob-sheet-body');
+  var grid=document.getElementById('ch-grid-'+idx);
+  var chevron=document.querySelector('#book-row-'+idx+' .mob-book-row-chevron');
+  var isOpen=grid.style.display!=='none';
+  if(isOpen){
+    grid.style.display='none';
+    if(chevron)chevron.classList.remove('open');
+  } else {
+    // Populate chapters if empty
+    if(!grid.children.length){
+      var b=BOOKS[idx];
+      var h='';
+      for(var c=1;c<=b.ch;c++) h+='<div class="mob-ch-item'+(idx===bi&&c===ci?' active':'')+'" onclick="sheetSelectCh2('+idx+','+c+')">'+c+'</div>';
+      grid.innerHTML=h;
+    }
+    grid.style.display='grid';
+    if(chevron)chevron.classList.add('open');
+    setTimeout(function(){grid.scrollIntoView({block:'nearest'});},50);
+  }
+}
+function sheetSelectCh2(bookIdx,ch){
+  bi=bookIdx;ci=ch;pendingBook=bookIdx;
+  loaded=true;sheetClose();updateLabel();load();
 }
 function sheetSelectBook(idx){
   pendingBook=idx;
