@@ -497,10 +497,7 @@ function toggleProgBook(idx){
     grid.innerHTML=h;
     grid.style.display='grid';
     if(chevron)chevron.classList.add('open');
-    setTimeout(function(){
-      var row=document.getElementById('prog-row-'+idx);
-      if(row)row.scrollIntoView({block:'start',behavior:'smooth'});
-    },50);
+  }
   }
 }
 function progShowBook(idx){toggleProgBook(idx);}
@@ -581,10 +578,6 @@ function toggleBookRow(idx){
     }
     grid.style.display='grid';
     if(chevron)chevron.classList.add('open');
-    setTimeout(function(){
-      var row=document.getElementById('book-row-'+idx);
-      if(row)row.scrollIntoView({block:'start',behavior:'smooth'});
-    },50);
   }
 }
 function sheetSelectCh2(bookIdx,ch){
