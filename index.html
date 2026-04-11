@@ -960,9 +960,20 @@ function renderBookIntro(d,bk){
   var themes=isEn?d.themes_en:d.themes_ko;
   var themes2=isEn?d.themes_ko:d.themes_en;
   if(themes&&themes.length){themes.forEach(function(t,i){
-    h+='<div class="intro-theme"><div class="intro-theme-title">'+esc(t.title)+'</div>';
-    if(isEn){h+='<div class="intro-theme-en">'+esc(t.desc)+'</div>';if(themes2&&themes2[i])h+='<div class="intro-theme-ko">'+esc(themes2[i].desc)+'</div>';}
-    else{h+='<div class="intro-theme-ko">'+esc(t.desc)+'</div>';if(themes2&&themes2[i])h+='<div class="intro-theme-en">'+esc(themes2[i].desc)+'</div>';}
+    var t2=themes2&&themes2[i];
+    h+='<div class="intro-theme">';
+    // Primary language title
+    h+='<div class="intro-theme-title">'+esc(t.title)+'</div>';
+    // Secondary language title (smaller, muted)
+    if(t2) h+='<div class="intro-theme-title" style="font-size:11px;color:#aaa;font-weight:500;margin-bottom:6px">'+esc(t2.title)+'</div>';
+    // Primary desc
+    if(isEn){
+      h+='<div class="intro-theme-en">'+esc(t.desc)+'</div>';
+      if(t2) h+='<div class="intro-theme-ko" style="margin-top:8px;padding-top:8px;border-top:1px solid #f0ede8">'+esc(t2.desc)+'</div>';
+    } else {
+      h+='<div class="intro-theme-ko">'+esc(t.desc)+'</div>';
+      if(t2) h+='<div class="intro-theme-en" style="margin-top:8px;padding-top:8px;border-top:1px solid #f0ede8">'+esc(t2.desc)+'</div>';
+    }
     h+='</div>';
   });}
   h+='</div></div>';
@@ -977,12 +988,15 @@ function renderBookIntro(d,bk){
       var nameKo=esc(loc.name_ko||loc.name);
       var descPrimary=esc(isEn?loc.desc:(loc.desc_ko||loc.desc));
       var descSecondary=esc(isEn?(loc.desc_ko||loc.desc):loc.desc);
-      var displayName=isEn?name:(nameKo+(nameKo!==name?' ('+name+')':''));
+      var displayNamePrimary=isEn?name:nameKo;
+      var displayNameSecondary=isEn?nameKo:name;
       h+='<div class="intro-map-legend-item"><span class="intro-map-legend-num">'+(i+1)+'</span>'
         +'<div class="intro-map-legend-text">'
-        +'<div class="intro-map-legend-name">'+displayName+'</div>'
+        +'<div class="intro-map-legend-name">'+displayNamePrimary
+        +(displayNameSecondary&&displayNameSecondary!==displayNamePrimary?' <span style="font-size:11px;font-weight:400;color:#aaa">('+displayNameSecondary+')</span>':'')
+        +'</div>'
         +'<div class="intro-map-legend-desc">'+descPrimary+'</div>'
-        +'<div class="intro-map-legend-desc" style="color:#aaa;font-style:italic;margin-top:2px">'+descSecondary+'</div>'
+        +'<div class="intro-map-legend-desc" style="color:#aaa;font-style:italic;margin-top:4px">'+descSecondary+'</div>'
         +'</div></div>';
     });
     h+='</div>';
@@ -1012,8 +1026,8 @@ function renderBookIntro(d,bk){
       var bounds=[];
       locs.forEach(function(loc,i){
         var icon=L.divIcon({
-          className:'',
-          html:'<div class="lnm">'+(i+1)+'</div>',
+          className:'lnm-wrapper',
+          html:'<div style="background:#1b2a4a;color:#fff;border-radius:50%;width:26px;height:26px;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;border:2px solid #fff;box-shadow:0 2px 6px rgba(0,0,0,.4);font-family:DM Sans,sans-serif;line-height:1">'+(i+1)+'</div>',
           iconSize:[26,26],
           iconAnchor:[13,13]
         });
