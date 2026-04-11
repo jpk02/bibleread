@@ -376,7 +376,12 @@ let bi=42,ci=3,fs=15,pendingBook=null,loaded=false,langOrder="ko-en",darkMode=fa
 })();
 function applyFs(){document.documentElement.style.setProperty('--fs',fs+'px');document.querySelectorAll('.vt').forEach(el=>el.style.fontSize=fs+'px');}
 function updateLabel(){
-  var lbl=loaded?(langOrder==='en-ko'?BOOKS[bi].en+' '+ci+' / '+BOOKS[bi].ko+' '+ci+'장':BOOKS[bi].ko+' '+ci+'장 / '+BOOKS[bi].en+' '+ci):(langOrder==='en-ko'?'Select Book / 책 선택':'책 선택 / Select Book');
+  var lbl;
+  if(inIntroMode){
+    lbl=langOrder==='en-ko'?BOOKS[bi].en+' — Book Intro':BOOKS[bi].ko+' — 책 소개';
+  } else {
+    lbl=loaded?(langOrder==='en-ko'?BOOKS[bi].en+' '+ci+' / '+BOOKS[bi].ko+' '+ci+'장':BOOKS[bi].ko+' '+ci+'장 / '+BOOKS[bi].en+' '+ci):(langOrder==='en-ko'?'Select Book / 책 선택':'책 선택 / Select Book');
+  }
   document.getElementById('mob-passage-label').textContent=lbl;
 }
 function step(d){
@@ -422,6 +427,10 @@ function toggleLangOrder(btn){
   var enBtn=document.querySelector('.votd-btn-en');
   if(koBtn) koBtn.style.display=langOrder==='en-ko'?'none':'';
   if(enBtn) enBtn.style.display=langOrder==='ko-en'?'none':'';
+  // Re-render book intro if visible
+  if(inIntroMode&&window._lastIntroData&&window._lastIntroBk){
+    renderBookIntro(window._lastIntroData,window._lastIntroBk);
+  }
   if(!document.getElementById('mob-sheet').classList.contains('hidden')){
     if(progView==='overview')progShowOverview();
     else if(pendingBook===null)sheetOpen('passage');
@@ -468,6 +477,25 @@ function progToggleManual(b,c){
     if(pctEl)pctEl.textContent=rc>0?pct+'%':'';
     row.className='prog-book-row'+(rc===bk2.ch?' complete':rc>0?' partial':'');
   }
+  // Refresh OT/NT summary bars
+  var data3=progLoad();
+  var OT=BOOKS.slice(0,39),NT=BOOKS.slice(39);
+  function calcStats(books,si){var t=0,r=0;books.forEach(function(bk,i){t+=bk.ch;for(var c=1;c<=bk.ch;c++)if(data3[progKey(si+i,c)])r++;});return{total:t,read:r};}
+  var otS=calcStats(OT,0),ntS=calcStats(NT,39);
+  // Update OT bar
+  var otBar=document.querySelector('.prog-testament:nth-child(1) .prog-bar-fill');
+  var otLabel=document.querySelector('.prog-testament:nth-child(1) .prog-bar-label');
+  var otPct=document.querySelector('.prog-testament:nth-child(1) .prog-bar-pct');
+  if(otBar)otBar.style.width=Math.round(otS.read/otS.total*100)+'%';
+  if(otLabel)otLabel.textContent=otS.read+'/'+otS.total;
+  if(otPct)otPct.textContent=Math.round(otS.read/otS.total*100)+'%';
+  // Update NT bar
+  var ntBar=document.querySelector('.prog-testament:nth-child(2) .prog-bar-fill');
+  var ntLabel=document.querySelector('.prog-testament:nth-child(2) .prog-bar-label');
+  var ntPct=document.querySelector('.prog-testament:nth-child(2) .prog-bar-pct');
+  if(ntBar)ntBar.style.width=Math.round(ntS.read/ntS.total*100)+'%';
+  if(ntLabel)ntLabel.textContent=ntS.read+'/'+ntS.total;
+  if(ntPct)ntPct.textContent=Math.round(ntS.read/ntS.total*100)+'%';
 }
 var progObserver=null;
 function progAttachObserver(){
@@ -628,6 +656,7 @@ function toggleBookRow(idx){
 }
 function sheetSelectCh2(bookIdx,ch){
   bi=bookIdx;ci=ch;pendingBook=bookIdx;inIntroMode=false;
+  window._lastIntroData=null;window._lastIntroBk=null;
   loaded=true;sheetClose();updateLabel();load();
 }
 function sheetSelectBook(idx){
@@ -798,12 +827,14 @@ function scrollToVerse(n){var el=document.getElementById('vr-'+n),m=document.get
 function scrollToFn(id){var el=document.getElementById(id),m=document.getElementById('main');if(el&&m)m.scrollTop+=el.getBoundingClientRect().top-m.getBoundingClientRect().top-20;}
 var inIntroMode=false;
 function loadBookIntroView(bookIdx){
-  bi=bookIdx;loaded=true;inIntroMode=true;sheetClose();updateLabel();
+  bi=bookIdx;loaded=true;inIntroMode=true;sheetClose();
+  updateLabel();
   var bk=BOOKS[bookIdx];
   document.getElementById('content').innerHTML='<div class="ldg"><div class="spinner"></div><div class="ldg-txt">'+(langOrder==='ko-en'?'책 소개 불러오는 중…':'Loading book intro…')+'</div></div>';
   document.getElementById('main').scrollTop=0;
   fetch(WORKER+'/intro/'+bk.n).then(function(r){return r.json();}).then(function(d){
     if(d.error) throw new Error(d.error);
+    window._lastIntroData=d;window._lastIntroBk=bk;
     renderBookIntro(d,bk);
   }).catch(function(e){
     document.getElementById('content').innerHTML='<div class="errbox">Intro failed: '+esc(e.message)+'</div>';
@@ -811,9 +842,11 @@ function loadBookIntroView(bookIdx){
 }
 function renderBookIntro(d,bk){
   var isEn=langOrder==='en-ko';
-  var ol=isEn?'Overview':'개요', bl=isEn?'Historical Background':'역사적 배경';
-  var tl=isEn?'Key Themes':'핵심 주제', gl=isEn?'Geographic Context':'지리적 배경';
-  var title=isEn?bk.en+' — Book Intro':bk.ko+' — 책 소개';
+  var ol=isEn?'Overview':'개요';
+  var bl=isEn?'Historical Background':'역사적 배경';
+  var tl=isEn?'Key Themes':'핵심 주제';
+  var gl=isEn?'Geographic Context':'지리적 배경';
+  var title=isEn?bk.en+' — Introduction':bk.ko+' — 책 소개';
   var h='<div class="col-headers"></div>';
   h+='<div style="padding:16px 14px 4px"><div style="font-size:18px;font-weight:700;color:#1b2a4a;font-family:\'Noto Sans KR\',sans-serif">'+title+'</div></div>';
   h+='<div class="intro-wrap">';
