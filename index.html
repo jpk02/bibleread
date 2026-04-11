@@ -554,13 +554,8 @@ function sheetOpen(mode){
     h+='</div>';
     body.innerHTML=h;
     setTimeout(function(){
-      var active=body.querySelector('.mob-book-row.active');
-      if(active){
-        var activeGrid=active.querySelector('.mob-ch-grid');
-        // Scroll so active chapter is visible, not just the book header
-        if(activeGrid) activeGrid.scrollIntoView({block:'center'});
-        else active.scrollIntoView({block:'center'});
-      }
+      var activeChapter=body.querySelector('.mob-ch-item.active');
+      if(activeChapter) activeChapter.scrollIntoView({block:'center'});
     },50);
   } else {
     document.getElementById('mob-sheet-title').textContent=langOrder==='en-ko'?'Font Size / 글자 크기':'글자 크기 / Font Size';
