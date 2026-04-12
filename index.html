@@ -99,7 +99,7 @@ body.dark .desk-icon-btn{color:#999}
 body.dark .desk-icon-btn:hover{color:#e8e5e0}
 .mob-nav-actions{display:flex;gap:5px;flex-shrink:0}
 /* #6: Fix dark mode square boxes on nav icons */
-.mob-icon-btn{background:none;border:none;font:500 14px inherit;color:#555;width:34px;height:34px;display:flex;align-items:center;justify-content:center;cursor:pointer;-webkit-appearance:none;appearance:none}
+.mob-icon-btn{background:none;border:none;font:600 17px inherit;color:#555;width:34px;height:34px;display:flex;align-items:center;justify-content:center;cursor:pointer;-webkit-appearance:none;appearance:none}
 body.dark .mob-icon-btn{color:#aaa;background:none!important}
 .mob-sheet{position:fixed;inset:0;z-index:1100;background:rgba(0,0,0,.4);display:flex;align-items:flex-end}
 .mob-sheet.hidden{display:none}
@@ -208,6 +208,9 @@ body.dark .prog-bar-track{background:#2a2a2a}
 .prog-ch.auto::after{content:'';position:absolute;bottom:3px;right:3px;width:4px;height:4px;background:rgba(255,255,255,.6);border-radius:50%}
 .prog-back-btn{background:none;border:none;color:#1b2a4a;font:500 13px inherit;cursor:pointer;padding:4px 0}
 body.dark .prog-ch.unread{background:#2a2a2a;color:#e8e5e0}
+body.dark .prog-ch.auto,body.dark .prog-ch.manual{background:#e8e5e0;color:#111}
+body.dark .prog-bar-fill{background:#e8e5e0}
+body.dark .prog-book-mini-fill{background:#e8e5e0}
 body.dark .prog-back-btn{color:#8899bb}
 /* Shared text styles for intro and commentary — #2 font consistency */
 .section-label{font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:#1b2a4a;margin-bottom:8px}
@@ -269,11 +272,13 @@ body.dark .votd-label{color:#8899bb}
 .votd-ko-ref{font-family:'Noto Sans KR',sans-serif;font-size:11px;font-weight:600;color:#1c1c1c;margin-bottom:5px}
 .votd-ko{font-family:'Noto Sans KR',sans-serif;font-size:18px;line-height:1.85;color:#1c1c1c;word-break:keep-all;margin-bottom:20px}
 body.dark .votd-ko{color:#e8e5e0}
+body.dark .votd-ko-ref{color:#e8e5e0}
 .votd-divider{height:1px;background:#f0ede8;margin-bottom:18px}
 body.dark .votd-divider{background:#333}
 .votd-en-ref{font-size:11px;font-weight:600;color:#1c1c1c;margin-bottom:5px}
 .votd-en{font-size:18px;line-height:1.85;color:#1c1c1c;margin-bottom:24px}
-body.dark .votd-en{color:#999}
+body.dark .votd-en{color:#e8e5e0}
+body.dark .votd-en-ref{color:#e8e5e0}
 .votd-read-btn{align-self:flex-start;background:#1b2a4a;border:none;border-radius:10px;color:#fff;cursor:pointer;font:500 13px inherit;padding:9px 20px}
 .votd-read-btn:active{opacity:.85}
 body.dark .votd-read-btn{background:#2a3d66}
@@ -317,7 +322,7 @@ body.dark .confirm-btn.cancel{background:#333;color:#bbb}
 body.dark .confirm-btn.ok{background:#e8e5e0;color:#111}
 .more-menu{position:absolute;top:40px;right:0;background:#fff;border:1px solid #e8e5e0;border-radius:12px;box-shadow:0 4px 20px rgba(0,0,0,.12);z-index:2000;min-width:210px;overflow:hidden;padding:4px 0}
 .more-menu.hidden{display:none}
-.more-menu-item{display:flex;align-items:center;justify-content:space-between;width:100%;background:none;border:none;padding:12px 16px;font:500 14px inherit;color:#222;cursor:pointer;gap:12px;text-align:left}
+.more-menu-item{display:flex;align-items:center;justify-content:space-between;width:100%;background:none;border:none;padding:12px 16px;font:500 14px inherit;color:#222;cursor:pointer;gap:0;text-align:left}
 .more-menu-item:active{background:#f7f5f2}
 body.dark .more-menu{background:#2a2a2a;border-color:#444}
 body.dark .more-menu-item{color:#e8e5e0}
@@ -397,15 +402,15 @@ header{display:none!important}
         <div id="more-menu" class="more-menu hidden">
           <button class="more-menu-item" onclick="sheetOpen('font');toggleMoreMenu()">
             <span>글자 크기 / Font Size</span>
-            <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.8"><text x="1" y="16" font-size="12" font-family="inherit" font-weight="600" stroke="none" fill="currentColor">A</text><text x="10" y="14" font-size="9" font-family="inherit" font-weight="500" stroke="none" fill="currentColor">A</text></svg>
+            <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.8"><text x="1" y="18" font-size="14" font-family="inherit" font-weight="600" stroke="none" fill="currentColor">A</text><text x="12" y="16" font-size="10" font-family="inherit" font-weight="500" stroke="none" fill="currentColor">A</text></svg>
           </button>
           <button class="more-menu-item" onclick="toggleDark();toggleMoreMenu()">
             <span>다크 모드 / Dark Mode</span>
-            <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 3v18"/><path d="M12 3a9 9 0 0 1 0 18z" fill="currentColor" stroke="none"/></svg>
+            <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 3v18"/><path d="M12 3a9 9 0 0 1 0 18z" fill="currentColor" stroke="none"/></svg>
           </button>
           <button class="more-menu-item" onclick="sheetOpen('progress');toggleMoreMenu()">
             <span>읽기 진도 / Progress</span>
-            <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20V10"/><path d="M18 20V4"/><path d="M6 20v-4"/></svg>
+            <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20V10"/><path d="M18 20V4"/><path d="M6 20v-4"/></svg>
           </button>
         </div>
       </div>
@@ -713,11 +718,11 @@ async function loadVotd(){
     html+='<div class="votd-label">'+(isEn?'Verse of the Day / 오늘의 말씀':'오늘의 말씀 / Verse of the Day')+'</div>';
     if(isEn){
       html+='<div class="votd-en-ref">'+ref+'</div>';
-      html+='<div class="votd-en" style="color:#1c1c1c;font-style:normal;margin-bottom:20px">'+v.text+'</div>';
-      if(koText){html+='<div class="votd-divider"></div><div class="votd-ko-ref">'+koRef+'</div><div class="votd-ko" style="font-size:15px;color:#555;margin-bottom:24px">'+koText+'</div>';}
+      html+='<div class="votd-en" style="margin-bottom:20px">'+v.text+'</div>';
+      if(koText){html+='<div class="votd-divider"></div><div class="votd-ko-ref">'+koRef+'</div><div class="votd-ko" style="font-size:15px;margin-bottom:24px;opacity:0.6">'+koText+'</div>';}
     } else {
       if(koText){html+='<div class="votd-ko-ref">'+koRef+'</div><div class="votd-ko">'+koText+'</div><div class="votd-divider"></div>';}
-      html+='<div class="votd-en-ref">'+ref+'</div><div class="votd-en" style="font-size:15px;color:#555;margin-bottom:24px">'+v.text+'</div>';
+      html+='<div class="votd-en-ref">'+ref+'</div><div class="votd-en" style="font-size:15px;opacity:0.6;margin-bottom:24px">'+v.text+'</div>';
     }
     if(bookIdx>=0){
       var chRef=v.bookname+' '+v.chapter;
