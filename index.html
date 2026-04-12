@@ -99,7 +99,7 @@ body.dark .desk-icon-btn{color:#999}
 body.dark .desk-icon-btn:hover{color:#e8e5e0}
 .mob-nav-actions{display:flex;gap:5px;flex-shrink:0}
 /* #6: Fix dark mode square boxes on nav icons */
-.mob-icon-btn{background:none;border:none;font:600 19px inherit;color:#555;width:38px;height:38px;display:flex;align-items:center;justify-content:center;cursor:pointer;-webkit-appearance:none;appearance:none}
+.mob-icon-btn{background:none;border:none;font:600 19px inherit;color:#555;width:38px;height:38px;display:flex;align-items:center;justify-content:center;cursor:pointer;-webkit-appearance:none;appearance:none;-webkit-tap-highlight-color:transparent}
 body.dark .mob-icon-btn{color:#e8e5e0!important;background:none!important}
 .mob-sheet{position:fixed;inset:0;z-index:1100;background:rgba(0,0,0,.4);display:flex;align-items:flex-end}
 .mob-sheet.hidden{display:none}
@@ -127,7 +127,7 @@ body.dark .mob-book-row-hdr .en{color:#e8e5e0}
 .mob-ch-item.active{background:#1b2a4a;color:#fff;font-weight:500}
 .mob-font-sheet{padding:16px 16px 32px}
 .mob-font-row{display:flex;align-items:center;gap:16px;padding:12px 0}
-button{touch-action:manipulation}
+button{touch-action:manipulation;-webkit-tap-highlight-color:transparent}
 .mob-font-btn{background:#efecea;border:1px solid #d8d4ce;border-radius:8px;font:500 18px inherit;color:#222;width:56px;height:56px;display:flex;align-items:center;justify-content:center;cursor:pointer;touch-action:manipulation}
 .mob-font-preview{flex:1;font-size:15px;color:#555;text-align:center}
 .edge-nav{position:fixed;top:50%;transform:translateY(-50%);z-index:50;display:none}
@@ -267,7 +267,7 @@ body.dark .fn-popup{background:#2a2a2a;border-color:#444;color:#ccc}
 .votd-card{background:#fff;border-radius:20px;padding:28px 24px 24px;max-width:420px;width:100%;box-shadow:0 2px 20px rgba(0,0,0,.07);display:flex;flex-direction:column}
 body.dark .votd-card{background:#242424;box-shadow:0 2px 20px rgba(0,0,0,.3)}
 /* #7: No ALL CAPS on votd label */
-.votd-label{font-size:10px;font-weight:700;letter-spacing:.08em;color:#1b2a4a;margin-bottom:18px}
+.votd-label{font-size:12px;font-weight:700;letter-spacing:.08em;color:#1b2a4a;margin-bottom:18px}
 body.dark .votd-label{color:#8899bb}
 .votd-ko-ref{font-family:'Noto Sans KR',sans-serif;font-size:11px;font-weight:600;color:#1c1c1c;margin-bottom:5px}
 .votd-ko{font-family:'Noto Sans KR',sans-serif;font-size:18px;line-height:1.85;color:#1c1c1c;word-break:keep-all;margin-bottom:20px}
@@ -395,7 +395,7 @@ header{display:none!important}
     <div class="mob-nav-actions">
       <button class="mob-icon-btn" id="mob-lang-btn" onclick="toggleLangOrder(this)" title="Language" style="width:38px">
         <svg id="mob-lang-svg" viewBox="0 0 38 38" width="38" height="38" fill="none" xmlns="http://www.w3.org/2000/svg">
-          <text id="mob-lang-text" x="19" y="25" text-anchor="middle" font-family="'Noto Sans KR','DM Sans',sans-serif" font-size="15" font-weight="400" fill="currentColor">한</text>
+          <text id="mob-lang-text" x="19" y="25" text-anchor="middle" font-family="'Noto Sans KR','DM Sans',sans-serif" font-size="14" font-weight="400" fill="currentColor">한</text>
         </svg>
       </button>
       <button class="mob-icon-btn" onclick="openSearch()" title="Search">
