@@ -99,8 +99,8 @@ body.dark .desk-icon-btn{color:#999}
 body.dark .desk-icon-btn:hover{color:#e8e5e0}
 .mob-nav-actions{display:flex;gap:5px;flex-shrink:0}
 /* #6: Fix dark mode square boxes on nav icons */
-.mob-icon-btn{background:none;border:none;font:600 19px inherit;color:#555;width:34px;height:34px;display:flex;align-items:center;justify-content:center;cursor:pointer;-webkit-appearance:none;appearance:none}
-body.dark .mob-icon-btn{color:#aaa;background:none!important}
+.mob-icon-btn{background:none;border:none;font:600 19px inherit;color:#555;width:38px;height:38px;display:flex;align-items:center;justify-content:center;cursor:pointer;-webkit-appearance:none;appearance:none}
+body.dark .mob-icon-btn{color:#e8e5e0!important;background:none!important}
 .mob-sheet{position:fixed;inset:0;z-index:1100;background:rgba(0,0,0,.4);display:flex;align-items:flex-end}
 .mob-sheet.hidden{display:none}
 .mob-sheet-inner{background:var(--bg);border-radius:16px 16px 0 0;width:100%;max-height:85vh;display:flex;flex-direction:column;overflow:hidden}
@@ -121,7 +121,7 @@ body.dark .mob-icon-btn{color:#aaa;background:none!important}
 .mob-ch-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:10px;padding:6px 20px 18px}
 body.dark .mob-book-row{border-bottom-color:#2a2a2a}
 body.dark .mob-book-row-hdr .ko{color:#e8e5e0}
-body.dark .mob-book-row-hdr .en{color:#666}
+body.dark .mob-book-row-hdr .en{color:#e8e5e0}
 .mob-ch-item{aspect-ratio:1;display:flex;align-items:center;justify-content:center;border-radius:8px;font-size:14px;color:#222;background:#efecea;cursor:pointer}
 .mob-ch-item:active{background:#d8d4ce}
 .mob-ch-item.active{background:#1b2a4a;color:#fff;font-weight:500}
@@ -279,6 +279,8 @@ body.dark .votd-divider{background:#333}
 .votd-en{font-size:18px;line-height:1.85;color:#1c1c1c;margin-bottom:24px}
 body.dark .votd-en{color:#e8e5e0}
 body.dark .votd-en-ref{color:#e8e5e0}
+.votd-secondary{color:#888!important}
+body.dark .votd-secondary{color:#e8e5e0!important}
 .votd-read-btn{align-self:flex-start;background:#1b2a4a;border:none;border-radius:10px;color:#fff;cursor:pointer;font:500 13px inherit;padding:9px 20px}
 .votd-read-btn:active{opacity:.85}
 body.dark .votd-read-btn{background:#2a3d66}
@@ -378,7 +380,7 @@ header{display:none!important}
   <div class="fctl desk-only">
     <button class="fbtn" id="fminus" type="button">&#8722;</button>
     <button class="fbtn" id="fplus" type="button">+</button>
-    <button class="desk-icon-btn" id="desk-dark-btn" onclick="toggleDark(this)" title="Dark mode">
+    <button class="desk-icon-btn" id="desk-dark-btn" onclick="toggleDark()" title="Dark mode">
       <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 3v18"/><path d="M12 3a9 9 0 0 1 0 18z" fill="currentColor" stroke="none"/></svg>
     </button>
     <button class="desk-icon-btn" onclick="sheetOpen('progress')" title="읽기 진도">
@@ -478,6 +480,11 @@ const WORKER='https://krengbible.pauljkim22.workers.dev';
 const BOOKS=[{ko:"창세기",en:"Genesis",n:1,ch:50},{ko:"출애굽기",en:"Exodus",n:2,ch:40},{ko:"레위기",en:"Leviticus",n:3,ch:27},{ko:"민수기",en:"Numbers",n:4,ch:36},{ko:"신명기",en:"Deuteronomy",n:5,ch:34},{ko:"여호수아",en:"Joshua",n:6,ch:24},{ko:"사사기",en:"Judges",n:7,ch:21},{ko:"룻기",en:"Ruth",n:8,ch:4},{ko:"사무엘상",en:"1 Samuel",n:9,ch:31},{ko:"사무엘하",en:"2 Samuel",n:10,ch:24},{ko:"열왕기상",en:"1 Kings",n:11,ch:22},{ko:"열왕기하",en:"2 Kings",n:12,ch:25},{ko:"역대상",en:"1 Chronicles",n:13,ch:29},{ko:"역대하",en:"2 Chronicles",n:14,ch:36},{ko:"에스라",en:"Ezra",n:15,ch:10},{ko:"느헤미야",en:"Nehemiah",n:16,ch:13},{ko:"에스더",en:"Esther",n:17,ch:10},{ko:"욥기",en:"Job",n:18,ch:42},{ko:"시편",en:"Psalms",n:19,ch:150},{ko:"잠언",en:"Proverbs",n:20,ch:31},{ko:"전도서",en:"Ecclesiastes",n:21,ch:12},{ko:"아가",en:"Song of Solomon",n:22,ch:8},{ko:"이사야",en:"Isaiah",n:23,ch:66},{ko:"예레미야",en:"Jeremiah",n:24,ch:52},{ko:"예레미야애가",en:"Lamentations",n:25,ch:5},{ko:"에스겔",en:"Ezekiel",n:26,ch:48},{ko:"다니엘",en:"Daniel",n:27,ch:12},{ko:"호세아",en:"Hosea",n:28,ch:14},{ko:"요엘",en:"Joel",n:29,ch:3},{ko:"아모스",en:"Amos",n:30,ch:9},{ko:"오바댜",en:"Obadiah",n:31,ch:1},{ko:"요나",en:"Jonah",n:32,ch:4},{ko:"미가",en:"Micah",n:33,ch:7},{ko:"나훔",en:"Nahum",n:34,ch:3},{ko:"하박국",en:"Habakkuk",n:35,ch:3},{ko:"스바냐",en:"Zephaniah",n:36,ch:3},{ko:"학개",en:"Haggai",n:37,ch:2},{ko:"스가랴",en:"Zechariah",n:38,ch:14},{ko:"말라기",en:"Malachi",n:39,ch:4},{ko:"마태복음",en:"Matthew",n:40,ch:28},{ko:"마가복음",en:"Mark",n:41,ch:16},{ko:"누가복음",en:"Luke",n:42,ch:24},{ko:"요한복음",en:"John",n:43,ch:21},{ko:"사도행전",en:"Acts",n:44,ch:28},{ko:"로마서",en:"Romans",n:45,ch:16},{ko:"고린도전서",en:"1 Corinthians",n:46,ch:16},{ko:"고린도후서",en:"2 Corinthians",n:47,ch:13},{ko:"갈라디아서",en:"Galatians",n:48,ch:6},{ko:"에베소서",en:"Ephesians",n:49,ch:6},{ko:"빌립보서",en:"Philippians",n:50,ch:4},{ko:"골로새서",en:"Colossians",n:51,ch:4},{ko:"데살로니가전서",en:"1 Thessalonians",n:52,ch:5},{ko:"데살로니가후서",en:"2 Thessalonians",n:53,ch:3},{ko:"디모데전서",en:"1 Timothy",n:54,ch:6},{ko:"디모데후서",en:"2 Timothy",n:55,ch:4},{ko:"디도서",en:"Titus",n:56,ch:3},{ko:"빌레몬서",en:"Philemon",n:57,ch:1},{ko:"히브리서",en:"Hebrews",n:58,ch:13},{ko:"야고보서",en:"James",n:59,ch:5},{ko:"베드로전서",en:"1 Peter",n:60,ch:5},{ko:"베드로후서",en:"2 Peter",n:61,ch:3},{ko:"요한일서",en:"1 John",n:62,ch:5},{ko:"요한이서",en:"2 John",n:63,ch:1},{ko:"요한삼서",en:"3 John",n:64,ch:1},{ko:"유다서",en:"Jude",n:65,ch:1},{ko:"요한계시록",en:"Revelation",n:66,ch:22}];
 let bi=42,ci=3,fs=15,pendingBook=null,loaded=false,langOrder="ko-en",darkMode=false;
 (function(){
+  // Restore dark mode preference
+  if(localStorage.getItem('krengbible_dark')==='1'){
+    darkMode=true;
+    document.body.classList.add('dark');
+  }
   applyFs();
   document.getElementById('fminus').addEventListener('click',()=>{fs=Math.max(11,fs-1);applyFs();});
   document.getElementById('fplus').addEventListener('click',()=>{fs=Math.min(22,fs+1);applyFs();});
@@ -585,9 +592,10 @@ function applyLangOrder(){
     document.head.appendChild(s);
   }
 }
-function toggleDark(btn){
+function toggleDark(){
   darkMode=!darkMode;
   document.body.classList.toggle('dark',darkMode);
+  localStorage.setItem('krengbible_dark',darkMode?'1':'0');
 }
 var PROGRESS_KEY='krengbible_progress';
 function progLoad(){try{return JSON.parse(localStorage.getItem(PROGRESS_KEY)||'{}');}catch(e){return {};}}
@@ -719,10 +727,10 @@ async function loadVotd(){
     if(isEn){
       html+='<div class="votd-en-ref">'+ref+'</div>';
       html+='<div class="votd-en" style="margin-bottom:20px">'+v.text+'</div>';
-      if(koText){html+='<div class="votd-divider"></div><div class="votd-ko-ref">'+koRef+'</div><div class="votd-ko" style="font-size:15px;margin-bottom:24px;opacity:0.6">'+koText+'</div>';}
+      if(koText){html+='<div class="votd-divider"></div><div class="votd-ko-ref">'+koRef+'</div><div class="votd-ko votd-secondary" style="font-size:15px;margin-bottom:24px">'+koText+'</div>';}
     } else {
       if(koText){html+='<div class="votd-ko-ref">'+koRef+'</div><div class="votd-ko">'+koText+'</div><div class="votd-divider"></div>';}
-      html+='<div class="votd-en-ref">'+ref+'</div><div class="votd-en" style="font-size:15px;opacity:0.6;margin-bottom:24px">'+v.text+'</div>';
+      html+='<div class="votd-en-ref">'+ref+'</div><div class="votd-en votd-secondary" style="font-size:15px;margin-bottom:24px">'+v.text+'</div>';
     }
     if(bookIdx>=0){
       var chRef=v.bookname+' '+v.chapter;
