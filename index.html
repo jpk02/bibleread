@@ -393,7 +393,11 @@ header{display:none!important}
       <svg width="10" height="6" viewBox="0 0 10 6"><path fill="currentColor" d="M0 0l5 6 5-6z"/></svg>
     </button>
     <div class="mob-nav-actions">
-      <button class="mob-icon-btn" id="mob-lang-btn" onclick="toggleLangOrder(this)">한</button>
+      <button class="mob-icon-btn" id="mob-lang-btn" onclick="toggleLangOrder(this)" title="Language" style="width:38px">
+        <svg id="mob-lang-svg" viewBox="0 0 38 38" width="38" height="38" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <text id="mob-lang-text" x="19" y="25" text-anchor="middle" font-family="'Noto Sans KR','DM Sans',sans-serif" font-size="16" font-weight="700" fill="currentColor">한</text>
+        </svg>
+      </button>
       <button class="mob-icon-btn" onclick="openSearch()" title="Search">
         <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.35-4.35"/></svg>
       </button>
@@ -544,9 +548,11 @@ function parseAndLoad(raw){
 function toggleLangOrder(btn){
   langOrder=langOrder==='ko-en'?'en-ko':'ko-en';
   var deskBtn=document.getElementById('desk-lang-btn');
-  var mobBtn=document.getElementById('mob-lang-btn');
+  var mobLangText=document.getElementById('mob-lang-text');
   if(deskBtn)deskBtn.textContent=langOrder==='ko-en'?'한':'Eng';
-  if(mobBtn)mobBtn.textContent=langOrder==='ko-en'?'한':'Eng';
+  if(mobLangText){
+    mobLangText.textContent=langOrder==='ko-en'?'한':'Eng';
+  }
   updateLabel();
   if(loaded)applyLangOrder();
   var koSide=document.querySelector('.title-row .ko-side');
