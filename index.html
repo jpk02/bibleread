@@ -862,7 +862,17 @@ function render(koData,esvData,bk,ch){
   h+='<div class="ch-tabs"><button class="ch-tab active" id="tab-text" onclick="switchTab(\'text\')">'+tl1+'</button><button class="ch-tab" id="tab-comm" onclick="switchTab(\'comm\')">'+tl2+'</button><button class="ch-tab" id="tab-intro" onclick="switchTab(\'intro\')">'+tl3+'</button></div>';
   h+='<div id="tab-text-content" style="padding-top:8px">';
   kv.forEach(function(v){
-    var n=v.verse,er=en[n]||'';
+    var n=v.verse;
+    // Handle grouped verses like "1-3" — look up first verse number for ESV match
+    var firstN=typeof n==='string'&&n.indexOf('-')>-1?parseInt(n):+n;
+    var er=en[firstN]||en[n]||'';
+    // For grouped verses, also concatenate subsequent ESV verses if they exist
+    if(typeof n==='string'&&n.indexOf('-')>-1){
+      var parts=n.split('-'),start=parseInt(parts[0]),end=parseInt(parts[1]);
+      var combined=[];
+      for(var vi=start;vi<=end;vi++){if(en[vi])combined.push(en[vi]);}
+      if(combined.length>0)er=combined.join(' ');
+    }
     if(headings[n])h+='<div class="shead-row"><div class="ko-side"></div><div class="en-side"><div class="shead">'+esc(headings[n])+'</div></div></div>';
     var eh=er.replace(/\((\d+)\)/g,function(_,x){return '<sup class="fn-ref" onclick="showFnByRef(\'fn-'+x+'\',event)">'+x+'</sup>';});
     var kh=v.text.replace(/\(KN:(\d+)\)/g,function(_,x){return '<sup class="fn-ref" onclick="showFnByRef(\'ko-fn-'+x+'\',event)">'+x+'</sup>';});
@@ -1165,7 +1175,7 @@ async function loadCommentary(){
   var bk=BOOKS[bi];
   var tComm=document.getElementById('tab-comm-content');
   if(!tComm) return;
-  tComm.innerHTML='<div class="ldg"><div class="spinner"></div><div class="ldg-txt">'+(langOrder==='ko-en'?'해설 불러오는 중…':'Loading commentary…')+'</div></div>';
+  tComm.innerHTML='<div class="ldg"><div class="spinner"></div><div class="ldg-txt">'+(langOrder==='ko-en'?'해설 불러오는 중… / Loading commentary…':'Loading commentary… / 해설 불러오는 중…')+'</div></div>';
   try{
     var r=await fetch(WORKER+'/commentary/'+bk.n+'/'+ci);
     if(!r.ok) throw new Error('Worker error '+r.status);
