@@ -1308,15 +1308,15 @@ document.getElementById('search-input').addEventListener('keydown',function(e){
 
 function isKorean(str){return /[\uAC00-\uD7A3\u1100-\u11FF\u3130-\u318F]/.test(str);}
 
-// Korean abbreviations that aren't simple prefixes
-var KO_ABBREV={'고전':45,'고후':46,'살전':51,'살후':52,'딤전':53,'딤후':54,'벧전':59,'벧후':60,'요일':61,'요이':62,'요삼':63,'빌':49,'골':50,'갈':47,'엡':48,'롬':44,'히':57,'약':58,'유':64,'계':65,'몬':56,'딛':55,'막':40,'눅':41,'요':42,'행':43,'마':39};
+// Korean abbreviations that aren't simple prefixes (values are 0-based array indices)
+var KO_ABBREV={'마':39,'막':40,'눅':41,'요':42,'행':43,'롬':44,'고전':45,'고후':46,'갈':47,'엡':48,'빌':49,'골':50,'살전':51,'살후':52,'딤전':53,'딤후':54,'딛':55,'몬':56,'히':57,'약':58,'벧전':59,'벧후':60,'요일':61,'요이':62,'요삼':63,'유':64,'계':65};
 
 // Check if query matches a book name only (no chapter number) — returns book index or -1
 function tryParseBookOnly(q){
   var bookQ=q.trim().toLowerCase();
   var koQ=q.trim();
   // Check Korean abbreviation map first
-  if(KO_ABBREV.hasOwnProperty(koQ)) return KO_ABBREV[koQ]-1;
+  if(KO_ABBREV.hasOwnProperty(koQ)) return KO_ABBREV[koQ];
   return BOOKS.findIndex(function(b){
     var enL=b.en.toLowerCase(),enNS=enL.replace(/\s+/g,''),bqNS=bookQ.replace(/\s+/g,'');
     if(enL===bookQ)return true;
@@ -1347,7 +1347,7 @@ function tryParseReference(q){
     var words=enL.split(' ');
     for(var w of words){if(w.startsWith(bookQ)&&bookQ.length>=3)return true;}
     // Korean — check abbrev map first, then prefix match
-    if(KO_ABBREV.hasOwnProperty(koQ)) return BOOKS.indexOf(b)===KO_ABBREV[koQ]-1;
+    if(KO_ABBREV.hasOwnProperty(koQ)) return BOOKS.indexOf(b)===KO_ABBREV[koQ];
     if(b.ko===koQ)return true;
     if(b.ko.startsWith(koQ)&&koQ.length>=1)return true;
     return false;
@@ -1447,6 +1447,18 @@ function searchNavigate(bookIdx,chapter,verse){
         },500);
       }
     },400);
+  });
+}
+// Adjust search results padding when keyboard opens/closes on iOS
+if(window.visualViewport){
+  window.visualViewport.addEventListener('resize',function(){
+    var searchResults=document.getElementById('search-results');
+    if(!searchResults)return;
+    var vvHeight=window.visualViewport.height;
+    var windowHeight=window.innerHeight;
+    var keyboardHeight=windowHeight-vvHeight;
+    // Add extra buffer for iOS autocomplete bar + pill (approx 50px)
+    searchResults.style.paddingBottom=keyboardHeight>50?(keyboardHeight+50)+'px':'8px';
   });
 }
 document.addEventListener('keydown',function(e){if(e.target.tagName==='SELECT'||e.target.id==='passage-input'||e.target.id==='search-input')return;if(e.key==='ArrowRight')step(1);if(e.key==='ArrowLeft')step(-1);});
