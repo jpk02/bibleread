@@ -1241,6 +1241,28 @@ function openSearch(){
   document.getElementById('search-results').innerHTML='<div class="search-empty"><svg viewBox="0 0 24 24" width="40" height="40" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round" style="color:#ddd"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.35-4.35"/></svg><span>'+emptyMsg+'</span></div>';
   setTimeout(function(){inp.focus();},100);
 }
+// Swipe left to close search
+(function(){
+  var overlay,sx=0,sy=0,dragging=false;
+  document.addEventListener('touchstart',function(e){
+    overlay=document.getElementById('search-overlay');
+    if(!overlay||overlay.classList.contains('hidden'))return;
+    sx=e.touches[0].clientX;sy=e.touches[0].clientY;dragging=false;
+  },{passive:true});
+  document.addEventListener('touchmove',function(e){
+    overlay=document.getElementById('search-overlay');
+    if(!overlay||overlay.classList.contains('hidden'))return;
+    var dx=e.touches[0].clientX-sx,dy=e.touches[0].clientY-sy;
+    if(!dragging&&Math.abs(dx)>10&&Math.abs(dx)>Math.abs(dy)*1.5)dragging=true;
+  },{passive:true});
+  document.addEventListener('touchend',function(e){
+    overlay=document.getElementById('search-overlay');
+    if(!overlay||overlay.classList.contains('hidden')||!dragging)return;
+    var dx=e.changedTouches[0].clientX-sx;
+    if(dx>80)closeSearch();
+    dragging=false;
+  },{passive:true});
+})();
 function closeSearch(){
   document.getElementById('search-overlay').classList.add('hidden');
   document.getElementById('search-input').value='';
