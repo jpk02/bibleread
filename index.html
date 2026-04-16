@@ -306,7 +306,7 @@ body.dark .votd-secondary{color:#e8e5e0!important}
 .votd-read-btn:active{opacity:.85}
 body.dark .votd-read-btn{background:#2a3d66}
 .verse-row.hl-selected .vt{text-decoration:underline;text-decoration-style:dashed;text-decoration-color:#888;text-decoration-thickness:2px;text-underline-offset:4px}
-.hl-bar{position:fixed;bottom:0;left:0;right:0;z-index:1200;background:#fff;border-top:1px solid #e8e5e0;padding:16px 16px 4px;display:flex;align-items:center;justify-content:center;gap:12px;transform:translateY(100%);transition:transform 0.25s cubic-bezier(0.25,0.46,0.45,0.94);pointer-events:none}
+.hl-bar{position:fixed;bottom:0;left:0;right:0;z-index:1200;background:#fff;border-top:1px solid #e8e5e0;padding:16px 16px 4px;display:flex;align-items:center;justify-content:flex-start;gap:12px;transform:translateY(100%);transition:transform 0.25s cubic-bezier(0.25,0.46,0.45,0.94);pointer-events:none}
 .hl-bar.visible{transform:translateY(0);pointer-events:auto}
 body.dark .hl-bar{background:#1e1e1e;border-top-color:#333}
 .hl-bar-handle{position:absolute;top:6px;left:50%;transform:translateX(-50%);width:36px;height:4px;background:#d8d4ce;border-radius:2px}
@@ -1046,29 +1046,28 @@ function render(koData,esvData,bk,ch){
   document.getElementById('main').addEventListener('scroll',hideFnPopup,{passive:true});
   document.addEventListener('click',function(e){if(!e.target.classList.contains('fn-ref'))hideFnPopup();});
 })();
-var HL_KEY='krengbible_hl',hlSelected=null,_savedFilter='all';
+var HL_KEY='krengbible_hl',hlSelected=null;
 
-function hlRenderSaved(hlData,filter){
+function hlOpenSaved(){
+  var hlData=hlLoad();
   var isKo=langOrder==='ko-en';
+  var title=isKo?'저장된 구절 / Saved':'Saved / 저장된 구절';
+  var titleEl=document.getElementById('saved-title');
+  if(titleEl){titleEl.textContent=title;titleEl.style.color=darkMode?'#e8e5e0':'#1c1c1c';}
   var list=document.getElementById('saved-list');
-  var allKeys=new Set([...Object.keys(hlData)]);
-  // Apply filter
-  var filtered=[...allKeys].filter(function(k){
-    if(filter==='highlights')return !!hlData[k];
-    return true;
-  });
-  if(filtered.length===0){
-    var emptyMsg=filter==='highlights'?(isKo?'저장된 하이라이트가 없습니다':'No highlights yet'):
-                 filter==='notes'?(isKo?'저장된 노트가 없습니다':'No notes yet'):
-                 (isKo?'저장된 구절이 없습니다':'No saved verses yet');
+  var keys=Object.keys(hlData);
+  if(keys.length===0){
     list.innerHTML='<div style="display:flex;flex-direction:column;align-items:center;justify-content:center;padding:80px 20px;gap:12px">'
       +'<svg viewBox="0 0 24 24" width="48" height="48" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round" style="color:#ddd"><path d="M19 21l-7-4-7 4V5a2 2 0 012-2h10a2 2 0 012 2z"/></svg>'
-      +'<span style="font-size:14px;color:#bbb">'+emptyMsg+'</span>'
+      +'<span style="font-size:14px;color:#bbb">'+(isKo?'저장된 하이라이트가 없습니다':'No highlights yet')+'</span>'
       +'</div>';
+    var overlay=document.getElementById('saved-modal');
+    overlay.style.transform='';overlay.style.transition='';
+    overlay.classList.remove('hidden');
     return;
   }
   var colorMap={y:'#fde047',g:'#86efac',b:'#93c5fd',p:'#d8b4fe',r:'#fca5a5'};
-  var sorted=filtered.sort(function(a,b){
+  var sorted=keys.sort(function(a,b){
     var pa=a.split('_').map(Number),pb=b.split('_').map(Number);
     return pa[0]-pb[0]||pa[1]-pb[1]||pa[2]-pb[2];
   });
@@ -1103,41 +1102,6 @@ function hlRenderSaved(hlData,filter){
   });
   html+='</div>';
   list.innerHTML=html;
-}
-function hlSetFilter(filter){
-  _savedFilter=filter;
-  var isKo=langOrder==='ko-en';
-  var hlData=hlLoad();
-  // Update filter button styles
-  var dm=darkMode;
-  document.querySelectorAll('.saved-filter-btn').forEach(function(btn){
-    var active=btn.dataset.filter===filter;
-    btn.style.background=active?(dm?'#e8e5e0':'#1b2a4a'):(dm?'#2a2a2a':'#efecea');
-    btn.style.color=active?(dm?'#1a1a1a':'#fff'):(dm?'#aaa':'#555');
-  });
-  hlRenderSaved(hlData,filter);
-}
-function hlOpenSaved(){
-  var hlData=hlLoad();
-    var isKo=langOrder==='ko-en';
-  var title=isKo?'저장된 구절 / Saved':'Saved / 저장된 구절';
-  var titleEl=document.getElementById('saved-title');
-  if(titleEl){titleEl.textContent=title;titleEl.style.color=darkMode?'#e8e5e0':'#1c1c1c';}
-  // Render filter tabs
-  var allLabel=isKo?'전체':'All';
-  var hlLabel=isKo?'하이라이트':'Highlights';
-    var dm=darkMode;
-  var filtersHTML='';
-  [{f:'all',l:allLabel},{f:'highlights',l:hlLabel},].forEach(function(item){
-    var active=_savedFilter===item.f;
-    filtersHTML+='<button class="saved-filter-btn" data-filter="'+item.f+'" onclick="hlSetFilter(\''+item.f+'\')" style="'
-      +'background:'+(active?(dm?'#e8e5e0':'#1b2a4a'):(dm?'#2a2a2a':'#efecea'))+';'
-      +'color:'+(active?(dm?'#1a1a1a':'#fff'):(dm?'#aaa':'#555'))+';'
-      +'border:none;border-radius:20px;font:600 12px inherit;padding:7px 16px;cursor:pointer;letter-spacing:.01em">'
-      +item.l+'</button>';
-  });
-  document.getElementById('saved-filters').innerHTML=filtersHTML;
-  hlRenderSaved(hlData,_savedFilter);
   var overlay=document.getElementById('saved-modal');
   overlay.style.transform='';overlay.style.transition='';
   overlay.classList.remove('hidden');
@@ -1778,7 +1742,6 @@ document.addEventListener('keydown',function(e){if(e.target.tagName==='SELECT'||
     </button>
     <span style="font-size:15px;font-weight:600;color:#1c1c1c;flex:1" id="saved-title">저장된 구절 / Saved</span>
   </div>
-  <div id="saved-filters" style="display:flex;gap:8px;padding:0 16px 12px;flex-shrink:0"></div>
   <div id="saved-list" style="flex:1;overflow-y:auto;overscroll-behavior:contain"></div>
 </div>
 <div class="edge-nav left"><button class="edge-btn" id="edge-bp" onclick="step(-1)" disabled>&#8249;</button></div>
