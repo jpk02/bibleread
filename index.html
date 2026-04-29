@@ -1241,6 +1241,9 @@ function hlShowToolbar(row,e){
     bar.style.bottom=Math.max(0,gap)+'px';
   }
   bar.classList.add('visible');
+  // Push main content up so last verse isn't hidden behind bar
+  var mainEl=document.getElementById('main');
+  if(mainEl)mainEl.style.paddingBottom=(bar.offsetHeight+16)+'px';
   var data=hlLoad(),n=row.id.replace('vr-',''),cur=data[hlKey(bi,ci,n)]||null;
   var koC={y:'노란색',g:'초록색',b:'파란색',p:'보라색',r:'빨간색'},enC={y:'Yellow',g:'Green',b:'Blue',p:'Purple',r:'Red'};
   bar.querySelectorAll('.hl-bar-swatch').forEach(function(s){
@@ -1252,6 +1255,9 @@ function hlHideToolbar(){
   var bar=document.getElementById('hl-bar');
   if(bar){bar.classList.remove('visible');bar.style.bottom='';}
   if(hlSelected){hlSelected.classList.remove('hl-selected');hlSelected=null;}
+  // Remove extra padding
+  var mainEl=document.getElementById('main');
+  if(mainEl)mainEl.style.paddingBottom='';
 }
 function hlAttach(){
   document.querySelectorAll('.verse-row').forEach(function(row){
