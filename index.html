@@ -1199,10 +1199,18 @@ function hlSave(d){try{localStorage.setItem(HL_KEY,JSON.stringify(d));}catch(e){
 function hlKey(b,c,v){return b+'_'+c+'_'+v;}
 function hlApplyAll(){var data=hlLoad();document.querySelectorAll('.verse-row').forEach(function(row){var n=row.id.replace('vr-',''),k=hlKey(bi,ci,n);row.classList.remove('hl-y','hl-g','hl-b','hl-p','hl-r');if(data[k])row.classList.add('hl-'+data[k]);});}
 function hlCopy(){
-  if(!hlSelected) return;
+  var rows=hlSelectedSet.size>0?Array.from(hlSelectedSet):[hlSelected];
+  rows=rows.filter(Boolean);
+  if(rows.length===0)return;
+  // Sort rows by DOM order
+  rows.sort(function(a,b){return a.compareDocumentPosition(b)&4?-1:1;});
   var texts=[];
-  hlSelected.querySelectorAll('.vt').forEach(function(vt){texts.push(vt.textContent.trim());});
-  var txt=texts.join(' ');
+  rows.forEach(function(row){
+    var parts=[];
+    row.querySelectorAll('.vt').forEach(function(vt){parts.push(vt.textContent.trim());});
+    texts.push(parts.join(' '));
+  });
+  var txt=texts.join('\n');
   navigator.clipboard.writeText(txt).then(function(){
     var btn=document.getElementById('hl-copy-btn');
     if(btn){var orig=btn.innerHTML;btn.innerHTML='<span style="font-size:16px;color:#2563eb">✓</span>';setTimeout(function(){btn.innerHTML=orig;},1200);}
@@ -1210,31 +1218,53 @@ function hlCopy(){
   hlHideToolbar();
 }
 function hlApply(color){
-  if(!hlSelected)return;
-  var n=hlSelected.id.replace('vr-',''),k=hlKey(bi,ci,n),data=hlLoad();
-  var current=data[k]||null;
-  if(color&&color===current)color=null;
-  if(color){
-    data[k]=color;
-    // Cache verse text for saved window
-    var vtData=vtLoad();
-    var koEl=hlSelected.querySelector('.ko-side .vt');
-    var enEl=hlSelected.querySelector('.en-side .vt');
-    vtData[k]={ko:koEl?koEl.textContent.trim():'',en:enEl?enEl.textContent.trim():''};
-    vtSave(vtData);
-  } else {
-    delete data[k];
-  }
+  if(hlSelectedSet.size===0&&!hlSelected)return;
+  var rows=hlSelectedSet.size>0?hlSelectedSet:new Set([hlSelected]);
+  var data=hlLoad();
+  rows.forEach(function(row){
+    var n=row.id.replace('vr-',''),k=hlKey(bi,ci,n);
+    var current=data[k]||null;
+    var newColor=(color&&color===current)?null:color;
+    if(newColor){
+      data[k]=newColor;
+      var vtData=vtLoad();
+      var koEl=row.querySelector('.ko-side .vt');
+      var enEl=row.querySelector('.en-side .vt');
+      vtData[k]={ko:koEl?koEl.textContent.trim():'',en:enEl?enEl.textContent.trim():''};
+      vtSave(vtData);
+    } else {
+      delete data[k];
+    }
+    row.classList.remove('hl-y','hl-g','hl-b','hl-p','hl-r');
+    if(newColor)row.classList.add('hl-'+newColor);
+  });
   hlSave(data);
-  hlSelected.classList.remove('hl-y','hl-g','hl-b','hl-p','hl-r');
-  if(color)hlSelected.classList.add('hl-'+color);
   hlHideToolbar();
 }
+var hlSelectedSet=new Set(); // tracks all selected verse rows
+
 function hlShowToolbar(row,e){
-  if(hlSelected&&hlSelected!==row) hlSelected.classList.remove('hl-selected');
-  hlSelected=row;row.classList.add('hl-selected');
   var bar=document.getElementById('hl-bar');
-  // Position above Safari URL bar using visualViewport
+  var barVisible=bar&&bar.classList.contains('visible');
+
+  if(barVisible){
+    // Bar already open — toggle this row into/out of selection
+    if(hlSelectedSet.has(row)){
+      hlSelectedSet.delete(row);
+      row.classList.remove('hl-selected');
+      if(hlSelectedSet.size===0){hlHideToolbar();return;}
+    } else {
+      hlSelectedSet.add(row);
+      row.classList.add('hl-selected');
+    }
+  } else {
+    // First tap — open bar with this verse
+    hlSelectedSet.clear();
+    hlSelectedSet.add(row);
+    row.classList.add('hl-selected');
+  }
+  hlSelected=row; // keep for copy/compat
+  // Position above Safari URL bar
   if(window.visualViewport){
     var vv=window.visualViewport;
     var gap=window.innerHeight-(vv.offsetTop+vv.height);
@@ -1244,6 +1274,7 @@ function hlShowToolbar(row,e){
   // Push main content up so last verse isn't hidden behind bar
   var mainEl=document.getElementById('main');
   if(mainEl)mainEl.style.paddingBottom=(bar.offsetHeight+16)+'px';
+  // Show swatch active state based on first selected verse
   var data=hlLoad(),n=row.id.replace('vr-',''),cur=data[hlKey(bi,ci,n)]||null;
   var koC={y:'노란색',g:'초록색',b:'파란색',p:'보라색',r:'빨간색'},enC={y:'Yellow',g:'Green',b:'Blue',p:'Purple',r:'Red'};
   bar.querySelectorAll('.hl-bar-swatch').forEach(function(s){
@@ -1254,8 +1285,9 @@ function hlShowToolbar(row,e){
 function hlHideToolbar(){
   var bar=document.getElementById('hl-bar');
   if(bar){bar.classList.remove('visible');bar.style.bottom='';}
-  if(hlSelected){hlSelected.classList.remove('hl-selected');hlSelected=null;}
-  // Remove extra padding
+  hlSelectedSet.forEach(function(r){r.classList.remove('hl-selected');});
+  hlSelectedSet.clear();
+  hlSelected=null;
   var mainEl=document.getElementById('main');
   if(mainEl)mainEl.style.paddingBottom='';
 }
@@ -1263,7 +1295,10 @@ function hlAttach(){
   document.querySelectorAll('.verse-row').forEach(function(row){
     row.addEventListener('click',function(e){
       if(e.target.classList.contains('fn-ref')) return;
-      if(hlSelected===row){ hlHideToolbar(); return; }
+      var bar=document.getElementById('hl-bar');
+      var barVisible=bar&&bar.classList.contains('visible');
+      // If bar not visible and tapping already-selected single row → deselect
+      if(!barVisible&&hlSelectedSet.has(row)){hlHideToolbar();return;}
       hlShowToolbar(row,e);
     });
   });
