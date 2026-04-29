@@ -865,6 +865,14 @@ async function loadVotd(){
     }
     html+='</div>';
     document.getElementById('content').innerHTML=html;
+    // Only disable scroll if content fits on screen
+    var mainEl=document.getElementById('main');
+    if(mainEl){
+      setTimeout(function(){
+        var content=document.getElementById('content');
+        mainEl.style.overflowY=content&&content.scrollHeight>mainEl.clientHeight?'scroll':'hidden';
+      },100);
+    }
     // Update footer with photo credit on VOTD page only
     var footer=document.getElementById('main-footer');
     if(footer){
@@ -942,6 +950,9 @@ async function load(){
   if(er.status==='rejected'){document.getElementById('content').innerHTML='<div class="errbox"><b>ESV Error:</b> '+esc(er.reason?.message||'Failed')+'</div>';return;}
   render(kr.value,er.value,bk,ci);
   loaded=true;document.getElementById('main').scrollTop=0;updateLabel();
+  // Re-enable scrolling for chapter reading
+  var mainEl=document.getElementById('main');
+  if(mainEl)mainEl.style.overflowY='';
   var inp=document.getElementById('passage-input');if(inp)inp.value=BOOKS[bi].en+' '+ci;
   // Reset footer — remove photo credit when reading chapters
   var footer=document.getElementById('main-footer');
@@ -1222,7 +1233,14 @@ function hlApply(color){
 function hlShowToolbar(row,e){
   if(hlSelected&&hlSelected!==row) hlSelected.classList.remove('hl-selected');
   hlSelected=row;row.classList.add('hl-selected');
-  var bar=document.getElementById('hl-bar');bar.classList.add('visible');
+  var bar=document.getElementById('hl-bar');
+  // Position above Safari URL bar using visualViewport
+  if(window.visualViewport){
+    var vv=window.visualViewport;
+    var gap=window.innerHeight-(vv.offsetTop+vv.height);
+    bar.style.bottom=Math.max(0,gap)+'px';
+  }
+  bar.classList.add('visible');
   var data=hlLoad(),n=row.id.replace('vr-',''),cur=data[hlKey(bi,ci,n)]||null;
   var koC={y:'노란색',g:'초록색',b:'파란색',p:'보라색',r:'빨간색'},enC={y:'Yellow',g:'Green',b:'Blue',p:'Purple',r:'Red'};
   bar.querySelectorAll('.hl-bar-swatch').forEach(function(s){
@@ -1232,7 +1250,7 @@ function hlShowToolbar(row,e){
 }
 function hlHideToolbar(){
   var bar=document.getElementById('hl-bar');
-  if(bar) bar.classList.remove('visible');
+  if(bar){bar.classList.remove('visible');bar.style.bottom='';}
   if(hlSelected){hlSelected.classList.remove('hl-selected');hlSelected=null;}
 }
 function hlAttach(){
