@@ -1264,16 +1264,16 @@ function hlShowToolbar(row,e){
     row.classList.add('hl-selected');
   }
   hlSelected=row; // keep for copy/compat
-  // Position above Safari URL bar
+  bar.classList.add('visible');
+  // Push main content up — fixed bar height + URL bar gap + buffer
+  var mainEl=document.getElementById('main');
+  var vvGap=0;
   if(window.visualViewport){
     var vv=window.visualViewport;
-    var gap=window.innerHeight-(vv.offsetTop+vv.height);
-    bar.style.bottom=Math.max(0,gap)+'px';
+    vvGap=Math.max(0,window.innerHeight-(vv.offsetTop+vv.height));
+    bar.style.bottom=vvGap+'px';
   }
-  bar.classList.add('visible');
-  // Push main content up so last verse isn't hidden behind bar
-  var mainEl=document.getElementById('main');
-  if(mainEl)mainEl.style.paddingBottom=(bar.offsetHeight+16)+'px';
+  if(mainEl)mainEl.style.paddingBottom=(80+vvGap+24)+'px';
   // Show swatch active state based on first selected verse
   var data=hlLoad(),n=row.id.replace('vr-',''),cur=data[hlKey(bi,ci,n)]||null;
   var koC={y:'노란색',g:'초록색',b:'파란색',p:'보라색',r:'빨간색'},enC={y:'Yellow',g:'Green',b:'Blue',p:'Purple',r:'Red'};
