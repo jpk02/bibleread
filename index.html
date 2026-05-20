@@ -861,7 +861,9 @@ function progShowOverview(){
   html+='</div>';
   var rl=langOrder==='ko-en'?'초기화 / Reset All':'Reset All / 초기화';
   html+='<div style="display:flex;justify-content:center;padding:16px 20px"><button onclick="progReset()" style="background:#efecea;border:1px solid #d8d4ce;color:#666;font:500 12px inherit;cursor:pointer;padding:6px 20px;border-radius:6px;font-family:inherit">'+rl+'</button></div>';
-  document.getElementById('mob-sheet-body').innerHTML=html;
+  var sheetBody=document.getElementById('mob-sheet-body');
+  sheetBody.innerHTML=html;
+  sheetBody.scrollTop=0;
 }
 function toggleProgBook(idx){
   var grid=document.getElementById('prog-ch-'+idx);
