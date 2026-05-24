@@ -347,18 +347,29 @@ body.dark .verse-row.hl-g .vt{background:#166534}
 body.dark .verse-row.hl-b .vt{background:#1e40af}
 body.dark .verse-row.hl-p .vt{background:#6b21a8}
 body.dark .verse-row.hl-r .vt{background:#991b1b}
-.confirm-modal{position:fixed;inset:0;z-index:1300;display:flex;align-items:center;justify-content:center;background:rgba(0,0,0,.4)}
+.confirm-modal{position:fixed;inset:0;z-index:2000;display:flex;align-items:center;justify-content:center;background:rgba(20,16,12,.42);backdrop-filter:blur(4px);-webkit-backdrop-filter:blur(4px);opacity:1;transition:opacity .18s}
 .confirm-modal.hidden{display:none}
-.confirm-box{background:#fff;border-radius:14px;padding:24px 20px 16px;max-width:300px;width:90%;box-shadow:0 8px 32px rgba(0,0,0,.15)}
-body.dark .confirm-box{background:#2a2a2a}
-.confirm-msg{font-size:14px;line-height:1.6;color:#222;margin-bottom:20px}
-body.dark .confirm-msg{color:#e8e5e0}
-.confirm-btns{display:flex;gap:8px;justify-content:flex-end}
-.confirm-btn{border:none;border-radius:8px;font:500 13px inherit;cursor:pointer;padding:8px 18px}
-.confirm-btn.cancel{background:#efecea;color:#555}
-body.dark .confirm-btn.cancel{background:#333;color:#bbb}
-.confirm-btn.ok{background:#222;color:#fff}
-body.dark .confirm-btn.ok{background:#e8e5e0;color:#111}
+.confirm-box{background:#fbfaf7;border-radius:18px;padding:28px 26px 20px;max-width:340px;width:90%;box-shadow:0 24px 64px rgba(20,16,12,.18),0 2px 8px rgba(20,16,12,.06);border:1px solid rgba(0,0,0,.04)}
+body.dark .confirm-box{background:#1f1d1a;border-color:rgba(255,255,255,.05);box-shadow:0 24px 64px rgba(0,0,0,.5)}
+.confirm-title{font:600 16px/1.3 'DM Sans','Noto Sans KR',-apple-system,sans-serif;color:#1a1a1a;margin:0 0 8px;letter-spacing:-.005em}
+body.dark .confirm-title{color:#f4f1eb}
+.confirm-msg{font:400 14px/1.55 'DM Sans','Noto Sans KR',-apple-system,sans-serif;color:#6b6760;margin-bottom:24px}
+body.dark .confirm-msg{color:#9a948a}
+.confirm-btns{display:flex;gap:6px;justify-content:flex-end;align-items:center}
+.confirm-btn{border:none;border-radius:999px;font:500 13px/1 'DM Sans','Noto Sans KR',-apple-system,sans-serif;cursor:pointer;padding:11px 20px;letter-spacing:.01em;transition:background .15s,color .15s,transform .08s}
+.confirm-btn:active{transform:scale(0.97)}
+.confirm-btn.cancel{background:transparent;color:#8c8470}
+.confirm-btn.cancel:hover{background:rgba(0,0,0,.045);color:#2a2520}
+body.dark .confirm-btn.cancel{color:#7a756a}
+body.dark .confirm-btn.cancel:hover{background:rgba(255,255,255,.06);color:#f0ede8}
+.confirm-btn.ok{background:#2a2520;color:#fbfaf7}
+.confirm-btn.ok:hover{background:#0f0d0a}
+body.dark .confirm-btn.ok{background:#e8e3d8;color:#161616}
+body.dark .confirm-btn.ok:hover{background:#fff}
+.confirm-btn.danger{background:#c44a44;color:#fff}
+.confirm-btn.danger:hover{background:#a83c37}
+body.dark .confirm-btn.danger{background:#b04a44}
+body.dark .confirm-btn.danger:hover{background:#943732}
 .more-menu{position:absolute;top:40px;right:0;background:#fff;border:1px solid #e8e5e0;border-radius:12px;box-shadow:0 4px 20px rgba(0,0,0,.12);z-index:2000;min-width:210px;overflow:hidden;padding:4px 0}
 .more-menu.hidden{display:none}
 .more-menu-item{display:flex;align-items:center;justify-content:space-between;width:100%;background:none;border:none;padding:12px 16px;font:400 14px inherit;color:#222;cursor:pointer;gap:0;text-align:left}
@@ -693,6 +704,7 @@ onAuthStateChanged(fbAuth, (user) => {
 </div>
 <div id="confirm-modal" class="confirm-modal hidden" onclick="if(event.target===this)confirmCancel()">
   <div class="confirm-box">
+    <div class="confirm-title" id="confirm-title" style="display:none"></div>
     <div class="confirm-msg" id="confirm-msg"></div>
     <div class="confirm-btns">
       <button class="confirm-btn cancel" id="confirm-cancel-btn" onclick="confirmCancel()">취소</button>
@@ -933,11 +945,25 @@ function progAttachObserver(){
 }
 var progView='overview',progViewBook=0;
 var _confirmCb=null;
-function showConfirm(msg,cb){
+// showConfirm(msg, cb)                                — legacy reset prompt
+// showConfirm(msg, cb, {title, okLabel, cancelLabel, danger})  — custom prompt
+function showConfirm(msg,cb,opts){
+  opts=opts||{};
   var isKo=langOrder==='ko-en';
+  var titleEl=document.getElementById('confirm-title');
+  if(opts.title){
+    titleEl.textContent=opts.title;
+    titleEl.style.display='';
+  } else {
+    titleEl.style.display='none';
+    titleEl.textContent='';
+  }
   document.getElementById('confirm-msg').textContent=msg;
-  document.getElementById('confirm-cancel-btn').textContent=isKo?'취소':'Cancel';
-  document.getElementById('confirm-ok-btn').textContent=isKo?'초기화':'Reset';
+  document.getElementById('confirm-cancel-btn').textContent=opts.cancelLabel || (isKo?'취소':'Cancel');
+  var okBtn=document.getElementById('confirm-ok-btn');
+  okBtn.textContent=opts.okLabel || (isKo?'초기화':'Reset');
+  okBtn.classList.remove('danger');
+  if(opts.danger) okBtn.classList.add('danger');
   document.getElementById('confirm-modal').classList.remove('hidden');
   _confirmCb=cb;
 }
@@ -1689,22 +1715,32 @@ function notesSaveEdit(id){
   if(typeof fbPushNote==='function') fbPushNote(id);
 }
 function notesDelete(id,skipConfirm){
-  if(!skipConfirm){
-    var isKo=langOrder==='ko-en';
-    if(!confirm(isKo?'이 노트를 삭제하시겠습니까?':'Delete this note?')) return;
+  var isKo=langOrder==='ko-en';
+  function doDelete(){
+    var data=notesLoad();
+    if(!data[id]) return;
+    // Tombstone for sync; remove from local active set.
+    delete data[id];
+    notesSave(data);
+    stampNote(id);
+    if(notesEditingId===id) notesEditingId=null;
+    notesRender();
+    // Also refresh Saved sheet if open.
+    var savedOverlay=document.getElementById('saved-modal');
+    if(savedOverlay && !savedOverlay.classList.contains('hidden')) hlOpenSaved();
+    if(typeof fbPushNote==='function') fbPushNote(id);
   }
-  var data=notesLoad();
-  if(!data[id]) return;
-  // Tombstone for sync; remove from local active set.
-  delete data[id];
-  notesSave(data);
-  stampNote(id);
-  if(notesEditingId===id) notesEditingId=null;
-  notesRender();
-  // Also refresh Saved sheet if open.
-  var savedOverlay=document.getElementById('saved-modal');
-  if(savedOverlay && !savedOverlay.classList.contains('hidden')) hlOpenSaved();
-  if(typeof fbPushNote==='function') fbPushNote(id);
+  if(skipConfirm){ doDelete(); return; }
+  showConfirm(
+    isKo?'이 노트는 영구적으로 삭제됩니다.':'This note will be permanently deleted.',
+    doDelete,
+    {
+      title: isKo?'노트 삭제':'Delete note',
+      okLabel: isKo?'삭제':'Delete',
+      cancelLabel: isKo?'취소':'Cancel',
+      danger: true
+    }
+  );
 }
 
 // Jump from Saved sheet directly into the notes panel for that note.
