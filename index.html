@@ -1440,6 +1440,9 @@ function notesOpen(){
   void overlay.offsetWidth;
   overlay.classList.remove('hidden');
   if(backdrop) backdrop.classList.remove('hidden');
+  // Lock body scroll while the pane is open — gives iOS Safari a clean
+  // "modal entered" signal so it'll properly release on close.
+  notesLockBodyScroll();
   if(typeof syncThemeColor==='function') syncThemeColor();
   // Attach outside-click handler (capture phase so we can swallow before delegates fire).
   if(!notesOutsideBound){
@@ -1455,6 +1458,12 @@ function notesOpen(){
 function notesClose(){
   var overlay=document.getElementById('notes-modal');
   var backdrop=document.getElementById('notes-backdrop');
+  // Explicitly blur any focused contenteditable — keeps iOS from holding
+  // residual keyboard / focus state after the pane is hidden, which is what
+  // appears to lock the URL bar chrome.
+  if(document.activeElement && document.activeElement.blur && document.activeElement!==document.body){
+    try{ document.activeElement.blur(); }catch(e){}
+  }
   if(overlay) overlay.classList.add('hidden');
   if(backdrop) backdrop.classList.add('hidden');
   notesEditingId=null;
@@ -1463,16 +1472,35 @@ function notesClose(){
     document.removeEventListener('click', notesOutsideClick, true);
     notesOutsideBound=false;
   }
+  // Unlock body scroll.
+  notesUnlockBodyScroll();
   // After the slide-off animation, fully unmount the pane from compositing.
-  // While left in the DOM with transform:translateX(100%), iOS Safari still
-  // reads its bg as a candidate for the chrome color and locks in that shade,
-  // ignoring subsequent dark/light toggles.
   setTimeout(function(){
     if(overlay && overlay.classList.contains('hidden')){
       overlay.style.display='none';
     }
     if(typeof syncThemeColor==='function') syncThemeColor();
   }, 340);
+}
+
+// iOS-friendly body scroll lock: position:fixed preserves the scroll position
+// while preventing background scroll.  Pairs with notesUnlockBodyScroll.
+var _notesSavedScrollY=0;
+function notesLockBodyScroll(){
+  _notesSavedScrollY = window.pageYOffset || document.documentElement.scrollTop || 0;
+  document.body.style.position='fixed';
+  document.body.style.top='-'+_notesSavedScrollY+'px';
+  document.body.style.left='0';
+  document.body.style.right='0';
+  document.body.style.width='100%';
+}
+function notesUnlockBodyScroll(){
+  document.body.style.position='';
+  document.body.style.top='';
+  document.body.style.left='';
+  document.body.style.right='';
+  document.body.style.width='';
+  window.scrollTo(0, _notesSavedScrollY);
 }
 var notesOutsideBound=false;
 // If a pending new editor is open and the user taps outside it (inside the pane,
