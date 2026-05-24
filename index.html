@@ -892,17 +892,42 @@ function applyLangOrder(){
 }
 function syncThemeColor(){
   var target=darkMode?'#1a1a1a':'#f7f5f2';
-  // iOS Safari caches the theme-color from the original meta element and often
-  // ignores attribute updates.  The most reliable way to force the URL bar and
-  // bottom home-indicator areas to recolor is to remove the existing meta tag(s)
-  // and create a fresh one — iOS re-parses the new element from scratch.
+  var sibling=darkMode?'#191919':'#f6f4f1';
+  // iOS Safari aggressively caches the chrome color after certain interactions
+  // (notably opening/closing a position:fixed full-height pane).  Multi-step
+  // forcing: (1) recreate meta tags fresh, (2) toggle html bg via inline style,
+  // (3) bounce scroll by 1px so iOS re-evaluates.
   var existing=document.querySelectorAll('meta[name="theme-color"]');
   existing.forEach(function(m){ m.parentNode && m.parentNode.removeChild(m); });
-  var m=document.createElement('meta');
-  m.setAttribute('name','theme-color');
-  m.setAttribute('id','theme-color-meta');
-  m.setAttribute('content', target);
-  document.head.appendChild(m);
+  function mk(content, media){
+    var m=document.createElement('meta');
+    m.setAttribute('name','theme-color');
+    if(media) m.setAttribute('media', media);
+    m.setAttribute('content', content);
+    return m;
+  }
+  // Insert media-queried fallbacks so iOS has explicit declarations for each scheme.
+  document.head.appendChild(mk(target, '(prefers-color-scheme: light)'));
+  document.head.appendChild(mk(target, '(prefers-color-scheme: dark)'));
+  var primary=mk(target);
+  primary.id='theme-color-meta';
+  document.head.appendChild(primary);
+  // Nudge the html bg color to provoke iOS chrome to recompute.
+  var root=document.documentElement;
+  root.style.backgroundColor=sibling;
+  // Bounce scroll one pixel to trigger iOS chrome re-evaluation.
+  var sy=window.pageYOffset||0;
+  try{ window.scrollTo(0, sy+1); }catch(e){}
+  setTimeout(function(){
+    root.style.backgroundColor=target;
+    try{ window.scrollTo(0, sy); }catch(e){}
+    // Second pass — recreate meta one more time after the nudge settles.
+    var ex=document.querySelectorAll('meta[name="theme-color"]');
+    ex.forEach(function(m){ m.parentNode && m.parentNode.removeChild(m); });
+    document.head.appendChild(mk(target, '(prefers-color-scheme: light)'));
+    document.head.appendChild(mk(target, '(prefers-color-scheme: dark)'));
+    var p=mk(target); p.id='theme-color-meta'; document.head.appendChild(p);
+  }, 50);
 }
 function toggleDark(){
   darkMode=!darkMode;
@@ -1416,7 +1441,11 @@ function notesOpen(){
   var overlay=document.getElementById('notes-modal');
   var backdrop=document.getElementById('notes-backdrop');
   if(!overlay) return;
+  // Reset any inline display:none set by the previous close.
+  overlay.style.display='';
   notesRender();
+  // Force reflow so the transition animates from the off-screen state.
+  void overlay.offsetWidth;
   overlay.classList.remove('hidden');
   if(backdrop) backdrop.classList.remove('hidden');
   if(typeof syncThemeColor==='function') syncThemeColor();
@@ -1442,8 +1471,16 @@ function notesClose(){
     document.removeEventListener('click', notesOutsideClick, true);
     notesOutsideBound=false;
   }
-  // Re-assert theme-color (syncThemeColor itself nudges so iOS recolors chrome).
-  if(typeof syncThemeColor==='function') syncThemeColor();
+  // After the slide-off animation, fully unmount the pane from compositing.
+  // While left in the DOM with transform:translateX(100%), iOS Safari still
+  // reads its bg as a candidate for the chrome color and locks in that shade,
+  // ignoring subsequent dark/light toggles.
+  setTimeout(function(){
+    if(overlay && overlay.classList.contains('hidden')){
+      overlay.style.display='none';
+    }
+    if(typeof syncThemeColor==='function') syncThemeColor();
+  }, 340);
 }
 var notesOutsideBound=false;
 // If a pending new editor is open and the user taps outside it (inside the pane,
