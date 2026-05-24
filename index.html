@@ -891,13 +891,18 @@ function applyLangOrder(){
   document.head.appendChild(s);
 }
 function syncThemeColor(){
-  var m=document.getElementById('theme-color-meta');
-  if(!m) return;
   var target=darkMode?'#1a1a1a':'#f7f5f2';
-  // Nudge: set to a sibling value, then to the real target, so iOS Safari
-  // reliably re-evaluates the status-bar color instead of caching the old one.
-  m.setAttribute('content', darkMode?'#191919':'#f6f4f1');
-  setTimeout(function(){ m.setAttribute('content', target); }, 30);
+  // iOS Safari caches the theme-color from the original meta element and often
+  // ignores attribute updates.  The most reliable way to force the URL bar and
+  // bottom home-indicator areas to recolor is to remove the existing meta tag(s)
+  // and create a fresh one — iOS re-parses the new element from scratch.
+  var existing=document.querySelectorAll('meta[name="theme-color"]');
+  existing.forEach(function(m){ m.parentNode && m.parentNode.removeChild(m); });
+  var m=document.createElement('meta');
+  m.setAttribute('name','theme-color');
+  m.setAttribute('id','theme-color-meta');
+  m.setAttribute('content', target);
+  document.head.appendChild(m);
 }
 function toggleDark(){
   darkMode=!darkMode;
