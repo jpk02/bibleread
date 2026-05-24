@@ -20,7 +20,8 @@
 <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,400&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css"/>
 <style>
-:root{--fs:15px;--bg:#f7f5f2;--ko-order:1;--en-order:2;--div:#e8e5e0}
+:root{--fs:15px;--bg:#f7f5f2;--ko-order:1;--en-order:2;--div:#e8e5e0;color-scheme:light}
+html.dark,html[data-scheme="dark"]{color-scheme:dark}
 *{box-sizing:border-box;margin:0;padding:0;max-width:100%}
 html,body{height:100%;overflow-x:hidden}html{overscroll-behavior-y:none}body{overscroll-behavior-y:none}
 body{font-family:'DM Sans',-apple-system,sans-serif;background:var(--bg);color:#111;display:flex;flex-direction:column;height:100%;-webkit-font-smoothing:antialiased}
@@ -892,11 +893,19 @@ function applyLangOrder(){
 }
 function syncThemeColor(){
   var target=darkMode?'#1a1a1a':'#f7f5f2';
-  var sibling=darkMode?'#191919':'#f6f4f1';
-  // iOS Safari aggressively caches the chrome color after certain interactions
-  // (notably opening/closing a position:fixed full-height pane).  Multi-step
-  // forcing: (1) recreate meta tags fresh, (2) toggle html bg via inline style,
-  // (3) bounce scroll by 1px so iOS re-evaluates.
+  // Flip CSS color-scheme on <html>.  This is what iOS Safari uses to color
+  // its URL bar background and the back/forward nav button tints — separate
+  // from theme-color which colors only the chrome border.  Without this,
+  // those UI elements stay in their previous scheme after a notes interaction.
+  var root=document.documentElement;
+  if(darkMode){
+    root.classList.add('dark');
+    root.style.colorScheme='dark';
+  } else {
+    root.classList.remove('dark');
+    root.style.colorScheme='light';
+  }
+  // Also recreate theme-color metas (covers the chrome border).
   var existing=document.querySelectorAll('meta[name="theme-color"]');
   existing.forEach(function(m){ m.parentNode && m.parentNode.removeChild(m); });
   function mk(content, media){
@@ -906,28 +915,11 @@ function syncThemeColor(){
     m.setAttribute('content', content);
     return m;
   }
-  // Insert media-queried fallbacks so iOS has explicit declarations for each scheme.
   document.head.appendChild(mk(target, '(prefers-color-scheme: light)'));
   document.head.appendChild(mk(target, '(prefers-color-scheme: dark)'));
   var primary=mk(target);
   primary.id='theme-color-meta';
   document.head.appendChild(primary);
-  // Nudge the html bg color to provoke iOS chrome to recompute.
-  var root=document.documentElement;
-  root.style.backgroundColor=sibling;
-  // Bounce scroll one pixel to trigger iOS chrome re-evaluation.
-  var sy=window.pageYOffset||0;
-  try{ window.scrollTo(0, sy+1); }catch(e){}
-  setTimeout(function(){
-    root.style.backgroundColor=target;
-    try{ window.scrollTo(0, sy); }catch(e){}
-    // Second pass — recreate meta one more time after the nudge settles.
-    var ex=document.querySelectorAll('meta[name="theme-color"]');
-    ex.forEach(function(m){ m.parentNode && m.parentNode.removeChild(m); });
-    document.head.appendChild(mk(target, '(prefers-color-scheme: light)'));
-    document.head.appendChild(mk(target, '(prefers-color-scheme: dark)'));
-    var p=mk(target); p.id='theme-color-meta'; document.head.appendChild(p);
-  }, 50);
 }
 function toggleDark(){
   darkMode=!darkMode;
