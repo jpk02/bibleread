@@ -893,11 +893,8 @@ function applyLangOrder(){
 }
 function syncThemeColor(){
   var target=darkMode?'#1a1a1a':'#f7f5f2';
-  // Flip CSS color-scheme on <html>.  This is what iOS Safari uses to color
-  // its URL bar background and the back/forward nav button tints — separate
-  // from theme-color which colors only the chrome border.  Without this,
-  // those UI elements stay in their previous scheme after a notes interaction.
   var root=document.documentElement;
+  // Color-scheme drives the URL bar input field tint and nav button colors.
   if(darkMode){
     root.classList.add('dark');
     root.style.colorScheme='dark';
@@ -905,21 +902,21 @@ function syncThemeColor(){
     root.classList.remove('dark');
     root.style.colorScheme='light';
   }
-  // Also recreate theme-color metas (covers the chrome border).
-  var existing=document.querySelectorAll('meta[name="theme-color"]');
-  existing.forEach(function(m){ m.parentNode && m.parentNode.removeChild(m); });
-  function mk(content, media){
-    var m=document.createElement('meta');
+  // Update theme-color meta (single tag, in-place update).
+  var m=document.getElementById('theme-color-meta');
+  if(!m){
+    m=document.createElement('meta');
     m.setAttribute('name','theme-color');
-    if(media) m.setAttribute('media', media);
-    m.setAttribute('content', content);
-    return m;
+    m.setAttribute('id','theme-color-meta');
+    document.head.appendChild(m);
   }
-  document.head.appendChild(mk(target, '(prefers-color-scheme: light)'));
-  document.head.appendChild(mk(target, '(prefers-color-scheme: dark)'));
-  var primary=mk(target);
-  primary.id='theme-color-meta';
-  document.head.appendChild(primary);
+  m.setAttribute('content', target);
+  // History soft-nudge: replacing the state with the same URL forces iOS
+  // Safari to re-evaluate page meta on certain iOS versions where the URL
+  // bar chrome is otherwise cached at page load.
+  try{
+    history.replaceState(history.state, document.title, location.href);
+  }catch(e){}
 }
 function toggleDark(){
   darkMode=!darkMode;
