@@ -420,9 +420,9 @@ header{display:none!important}
 .mob-sheet-inner{border-radius:16px 16px 0 0!important;max-height:85vh!important;max-width:100%!important}
 .prog-chapters{grid-template-columns:repeat(6,1fr)!important}
 /* Notes — document-style side pane */
-.notes-pane{position:fixed;top:0;right:0;width:440px;max-width:100vw;height:100vh;height:100dvh;background:#fbfaf7;z-index:1500;display:flex;flex-direction:column;border-left:1px solid #ece8e0;box-shadow:-16px 0 40px rgba(0,0,0,.04);transform:translateX(0);transition:transform 0.32s cubic-bezier(0.32,0.72,0.36,1)}
+.notes-pane{position:fixed;top:0;right:0;width:440px;max-width:100vw;height:100vh;height:100dvh;background:var(--bg);z-index:1500;display:flex;flex-direction:column;border-left:1px solid #ece8e0;box-shadow:-16px 0 40px rgba(0,0,0,.04);transform:translateX(0);transition:transform 0.32s cubic-bezier(0.32,0.72,0.36,1)}
 .notes-pane.hidden{transform:translateX(100%);pointer-events:none}
-body.dark .notes-pane{background:#161616;border-left-color:#1f1f1f;box-shadow:-16px 0 40px rgba(0,0,0,.55)}
+body.dark .notes-pane{border-left-color:#1f1f1f;box-shadow:-16px 0 40px rgba(0,0,0,.55)}
 .notes-pane-close{position:absolute;top:18px;right:18px;background:none;border:none;cursor:pointer;color:#9a9488;padding:6px;line-height:0;border-radius:50%;z-index:2;transition:color .15s,background .15s}
 .notes-pane-close:hover{color:#1c1c1c;background:rgba(0,0,0,.04)}
 body.dark .notes-pane-close{color:#777}
@@ -452,10 +452,9 @@ body.dark .notes-doc-meta{color:#6b6760}
 .note-entry{position:relative;overflow:hidden;touch-action:pan-y}
 .note-entry+.note-entry{margin-top:10px}
 .note-entry-content{
-  display:block;padding:18px 0 22px;background:#fbfaf7;position:relative;z-index:1;
+  display:block;padding:18px 0 22px;background:var(--bg);position:relative;z-index:1;
   transform:translateX(0);transition:transform .22s cubic-bezier(.32,.72,.36,1);
 }
-body.dark .note-entry-content{background:#161616}
 .note-entry-delete{
   position:absolute;top:0;bottom:0;left:0;right:0;
   background:#c44a44;color:#fff;
