@@ -272,20 +272,19 @@ body.dark .comm-label{color:#8899bb}
 .comm-en{font-size:15px;line-height:1.75;color:#1c1c1c;margin-bottom:6px}
 body.dark .comm-ko{color:#e8e5e0}
 body.dark .comm-en{color:#e8e5e0}
-/* Chapter Insights */
-.insights-wrap{padding:24px 22px 60px;display:flex;flex-direction:column;gap:36px;max-width:680px;margin:0 auto}
+/* Chapter Insights — typography matches commentary/intro tabs */
+.insights-wrap{padding:16px 20px 60px 22px;display:flex;flex-direction:column;gap:28px}
 .insight-card{}
-.insight-kicker{font:500 12px/1.4 'DM Sans','Noto Sans KR',-apple-system,sans-serif;letter-spacing:.02em;color:#8c8470;margin-bottom:8px}
-body.dark .insight-kicker{color:#e8e5e0}
-.insight-title{font:600 18px/1.35 'DM Sans','Noto Sans KR',-apple-system,sans-serif;color:#1a1a1a;margin:0 0 14px;letter-spacing:-.01em}
-body.dark .insight-title{color:#f4f1eb}
-.insight-body{font:400 15px/1.75 'Iowan Old Style','Palatino Linotype','Palatino','Book Antiqua',Georgia,'Noto Serif KR','Noto Sans KR',serif;color:#2a2a2a;letter-spacing:.002em}
-.insight-body p{margin:0 0 14px}
+.insight-kicker{font-size:13px;font-weight:700;letter-spacing:.04em;color:#1b2a4a;margin-bottom:6px}
+body.dark .insight-kicker{color:#8899bb}
+.insight-title{font-family:'Noto Sans KR',sans-serif;font-size:17px;font-weight:600;color:#1c1c1c;margin:0 0 10px;line-height:1.45;word-break:keep-all;letter-spacing:-.01em}
+body.dark .insight-title{color:#e8e5e0}
+.insight-body{font-size:15px;color:#1c1c1c;margin:0;line-height:1.75}
+.insight-body.insight-body-ko{font-family:'Noto Sans KR',sans-serif;line-height:1.85;word-break:keep-all;letter-spacing:-.02em}
+.insight-body p{margin:0 0 12px}
 .insight-body p:last-child{margin-bottom:0}
 body.dark .insight-body{color:#e8e5e0}
-.insights-attrib{font:500 11px/1.5 'DM Sans','Noto Sans KR',-apple-system,sans-serif;color:#a89f8e;letter-spacing:.02em;margin-top:24px;padding-top:24px;border-top:1px solid #ede9e3;text-align:center}
-body.dark .insights-attrib{color:#e8e5e0;border-top-color:#333}
-.insights-empty{padding:60px 20px;text-align:center;font:400 14px/1.6 'DM Sans','Noto Sans KR',-apple-system,sans-serif;color:#a89f8e}
+.insights-empty{padding:60px 20px;text-align:center;font:400 14px/1.6 'Noto Sans KR',-apple-system,sans-serif;color:#a89f8e}
 body.dark .insights-empty{color:#e8e5e0}
 .fn-popup{position:fixed;z-index:200;background:#fff;border:1px solid #e8e5e0;border-radius:8px;padding:10px 14px;max-width:280px;font-size:12px;color:#444;line-height:1.6;box-shadow:0 4px 16px rgba(0,0,0,.12);pointer-events:none;transition:opacity .15s}
 body.dark .fn-popup{background:#2a2a2a;border-color:#444;color:#ccc}
@@ -797,7 +796,7 @@ let bi=42,ci=3,fs=15,pendingBook=null,loaded=false,langOrder="ko-en",darkMode=fa
 })();
 function applyFs(){
   document.documentElement.style.setProperty('--fs',fs+'px');
-  document.querySelectorAll('.vt,.comm-ko,.comm-en,.intro-ko,.intro-en,.intro-theme-ko,.intro-theme-en').forEach(function(el){el.style.fontSize=fs+'px';});
+  document.querySelectorAll('.vt,.comm-ko,.comm-en,.intro-ko,.intro-en,.intro-theme-ko,.intro-theme-en,.insight-body,.insight-title').forEach(function(el){el.style.fontSize=fs+'px';});
 }
 function updateLabel(){
   var lbl;
@@ -1227,7 +1226,7 @@ function toggleBookRow(idx){
   if(isOpen){grid.style.display='none';if(chevron)chevron.classList.remove('open');}
   else{
     var b=BOOKS[idx],h='';
-    for(var c=1;c<=b.ch;c++)h+='<div class="mob-ch-item'+(idx===bi&&c===ci&&!inIntroMode?' active':'')+'" onclick="sheetSelectCh2('+idx+','+c+')">'+c+'</div>';
+    for(var c=1;c<=b.ch;c++)h+='<div class="mob-ch-item'+(loaded&&idx===bi&&c===ci&&!inIntroMode?' active':'')+'" onclick="sheetSelectCh2('+idx+','+c+')">'+c+'</div>';
     grid.innerHTML=h;grid.style.display='grid';if(chevron)chevron.classList.add('open');
   }
 }
@@ -1240,7 +1239,7 @@ function sheetSelectBook(idx){
   pendingBook=idx;
   document.getElementById('mob-sheet-title').textContent=langOrder==='en-ko'?BOOKS[idx].en+' '+BOOKS[idx].ko:BOOKS[idx].ko+' '+BOOKS[idx].en;
   var h='<div class="mob-ch-grid">';
-  for(var i=1;i<=BOOKS[idx].ch;i++)h+='<div class="mob-ch-item '+(idx===bi&&i===ci?'active':'')+'" onclick="sheetSelectCh('+i+')">'+i+'</div>';
+  for(var i=1;i<=BOOKS[idx].ch;i++)h+='<div class="mob-ch-item '+(loaded&&idx===bi&&i===ci?'active':'')+'" onclick="sheetSelectCh('+i+')">'+i+'</div>';
   h+='</div>';document.getElementById('mob-sheet-body').innerHTML=h;
 }
 function sheetSelectCh(ch){bi=pendingBook;ci=ch;loaded=true;sheetClose();updateLabel();load();}
@@ -2455,6 +2454,7 @@ function loadInsights(){
 
 function renderInsights(data, tEl){
   var isKo=langOrder==='ko-en';
+  var bodyClass = isKo ? 'insight-body insight-body-ko' : 'insight-body insight-body-en';
   var html='<div class="insights-wrap">';
   data.cards.forEach(function(card){
     var kicker=isKo?(card.kicker_ko||card.kicker_en||card.kicker):(card.kicker_en||card.kicker_ko||card.kicker);
@@ -2463,7 +2463,7 @@ function renderInsights(data, tEl){
     html+='<div class="insight-card">';
     if(kicker) html+='<div class="insight-kicker">'+esc(kicker)+'</div>';
     html+='<h3 class="insight-title">'+esc(title||'')+'</h3>';
-    html+='<div class="insight-body">';
+    html+='<div class="'+bodyClass+'">';
     (body||'').split(/\n\n+/).forEach(function(para){
       html+='<p>'+esc(para)+'</p>';
     });
