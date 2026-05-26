@@ -12,6 +12,210 @@ Local working file (not committed to public site if you'd prefer — let me know
 
 ## Anchored Concepts by Chapter
 
+### Genesis
+
+**Gen 1 — Creation**
+- Two creation accounts (1:1-2:3 vs 2:4ff) and their distinct functions
+- *Imago Dei* — image of God; male/female together; dominion
+- Sabbath rest as creation's goal, anticipating Heb 4
+- "Let us make" — Trinity hint; ANE plural-of-majesty vs Christian reading
+
+**Gen 2 — Garden**
+- "Not good to be alone" — communion as creation good
+- Eve from Adam's rib — equality with intimacy; Eph 5 echo
+- Tree of life vs tree of knowledge — covenant test
+
+**Gen 3 — Fall**
+- The serpent (Satan in Eden); Rev 12 ancient dragon
+- Protoevangelium (3:15) — seed of woman crushing serpent
+- Why fruit? Covenant test, not nutritional
+- Garments of skin — first sacrifice, gospel anticipation
+
+**Gen 4 — Cain and Abel**
+- Why Abel's offering accepted — heart vs ritual (Heb 11:4)
+- Mark of Cain as protection, not punishment
+- Two seedlines: Cain's city-builders, Seth's worshipers
+
+**Gen 5 — Genealogy**
+- "And he died" refrain — sin's payout
+- Enoch walked with God and was not — exception that proves the rule
+- Long lifespans — antediluvian condition
+
+**Gen 6 — Pre-flood**
+- "Sons of God" — three views (angelic, Sethite, dynastic)
+- Ark dimensions and tabernacle/temple parallel; *tevah* preservation
+
+**Gen 7 — Flood begins**
+- Clean/unclean before Sinai — pre-Mosaic religious knowledge
+
+**Gen 8 — Flood recedes**
+- "God remembered Noah" — *zakar* as covenant action (also anchored at Ex 2)
+- "Never again" promise grounded in pleasing aroma (forward-looking to cross)
+
+**Gen 9 — Noahic covenant**
+- *Qeshet* — rainbow as war bow turned upward
+- Noah's drunkenness; curse on Canaan (NOT African peoples); covenant repeated Eden pattern
+
+**Gen 10 — Table of nations**
+- Seventy nations; symbolic completion; Abrahamic blessing aimed here
+- Common human descent (Acts 17:26)
+
+**Gen 11 — Babel**
+- Threefold sin: stairway to heaven, name for ourselves, refusing to scatter
+- Pentecost as Babel reversed
+- Terah's partial obedience contrasted with Abram's
+
+**Gen 12 — Call of Abram**
+- Seven promises answering Babel point by point
+- Sarai in Pharaoh's house — exodus pattern in miniature
+
+**Gen 13 — Lot's choice**
+- Walking by promise vs walking by sight; Sodom looks like Eden
+
+**Gen 14 — Melchizedek**
+- King-priest of Salem; bread and wine; Hebrews 7 priesthood typology
+
+**Gen 15 — Covenant cut**
+- "Counted as righteousness" — first justification verse (Rom 4)
+- God walks through pieces alone — unilateral self-curse; cross foreshadow
+
+**Gen 16 — Hagar and Ishmael**
+- Hagar's expedient; *El Roi* "God who sees me"
+- Gal 4 allegory: flesh vs promise
+
+**Gen 17 — Circumcision**
+- Specific symbolism (organ of generation, flesh cut, blood, infant inclusion)
+- Name changes (Abram → Abraham, Sarai → Sarah)
+
+**Gen 18 — Mamre visit**
+- Three visitors / theophany (Christophany?)
+- Abraham's bargaining for Sodom — down to ten; cross goes to one
+
+**Gen 19 — Sodom destroyed**
+- Sodom's sin per Ezek 16:49 (broader than sexual)
+- Lot's daughters and origin of Moab/Ammon; Ruth redemption
+
+**Gen 20 — Sister-lie repeated**
+- Spiritual maturity doesn't eliminate old self; Abimelech's integrity
+
+**Gen 21 — Isaac born**
+- Isaac as "laughter" — name carries disbelief turned to joy
+- Isaac as type of every believer (Gal 4:28)
+
+**Gen 22 — Akedah**
+- Three things that make the test bearable (announced as test, Heb 11:19 reasoning, substitution)
+- Mount Moriah = temple mount; cross prefiguration
+- *Jehovah-Jireh* — Lord will provide a substitute (not casual proverb)
+
+**Gen 23 — Sarah's burial**
+- Machpelah as first piece of promised land owned
+- Faith planted in dirt (Heb 11:13)
+
+**Gen 24 — Bride for Isaac**
+- Servant's specific prayer as model for guidance
+- Rebekah's "I will go" — bride-of-Christ typology (Father-Spirit-Son-Bride)
+
+**Gen 25 — Twins**
+- Pre-natal election (Rom 9 anchor)
+- Esau despising birthright — failing to feel the future (Heb 12:16)
+
+**Gen 26 — Isaac repeats**
+- Covenant inheritance is generational, not one-time
+- Wells re-dug; sister-lie again
+
+**Gen 27 — Stolen blessing**
+- Concursus — God's purpose advances through human sin without endorsement
+- Cost of getting what God already promised through deception
+
+**Gen 28 — Bethel ladder**
+- *Sullam* — Babel reversed; God-given access not human construction
+- John 1:51 — Jesus IS the ladder
+
+**Gen 29 — Wrong sister**
+- Deceiver deceived — providence shaping discipline
+- Leah and the messianic line through Judah
+
+**Gen 30 — Twelve sons**
+- Tribes born from broken polygamous household; election ≠ moral excellence
+
+**Gen 31 — Teraphim**
+- Portable idolatry; covenant migration doesn't auto-cleanse the household
+
+**Gen 32 — Peniel**
+- Wrestling with the man (Christophany?); name change Jacob → Israel
+- The limp as mark of mature faith; 2 Cor 12 thorn
+
+**Gen 33 — Esau reunion**
+- Reconciliation as second theophany ("I have seen your face as one sees God")
+- Settled peace ≠ continuing partnership
+
+**Gen 34 — Dinah**
+- Simeon/Levi's vengeance; narrator's later curse (49:7)
+- Patriarchs not romanticized; daughter's silence broken later by prophets
+
+**Gen 35 — Return to Bethel**
+- Burying foreign gods before approaching God
+- Multiple deaths within one chapter (Deborah, Rachel, Isaac)
+
+**Gen 36 — Esau's line**
+- Election ≠ visible prosperity; Edom got monarchy first
+- Edom's later hostility (Obadiah)
+
+**Gen 37 — Joseph the dreamer**
+- Genuine revelation carried badly at 17; refinement needed
+- Christological parallels (sold by brothers, stripped, presumed dead)
+
+**Gen 38 — Judah and Tamar**
+- Why interruption — Judah/Joseph contrast, messianic line through scandal
+- Judah's first confession ("she is more righteous")
+
+**Gen 39 — Joseph in Potiphar's house**
+- "The LORD was with Joseph" refrain — in both house and dungeon
+- *Coram Deo* — sin against God specifically (39:9)
+
+**Gen 40 — Cupbearer forgets**
+- Providence in delay; two-year forgetting calibrates rescue to purpose
+
+**Gen 41 — Joseph exalted**
+- Deflection of credit (matured gifting)
+- Speed of elevation; Ps 105:18-22 on testing
+- Famine relief reaches "all the earth" — Gentile blessing preview
+
+**Gen 42 — Brothers return**
+- Joseph's delayed revelation as test of changed character
+- Brothers' Hebrew lament reveals 20-year-old guilt
+
+**Gen 43 — Judah's pledge**
+- Reuben vs Judah's offers; Judah's deeper transformation
+
+**Gen 44 — Substitution**
+- Judah's speech — moral climax of Joseph narrative
+- Substitutionary love prefigures the Lion of Judah
+
+**Gen 45 — "I am Joseph"**
+- Concursus explicit: "you sold... God sent"
+- Joseph weeps — providence + grief coexist
+
+**Gen 46 — Down to Egypt**
+- Why God commands the move; Egypt as part of long plan (Gen 15:13)
+- Seventy go down
+
+**Gen 47 — Jacob before Pharaoh**
+- Patriarch blesses king (Heb 7:7)
+- "Few and evil" — sojourning identity
+
+**Gen 48 — Crossed hands**
+- Deliberate inversion of birth order; Ephraim over Manasseh
+- Joseph receives double portion via adoption
+
+**Gen 49 — Twelve tribes**
+- Reuben/Simeon/Levi disinherited; scepter to Judah (messianic)
+- Joseph blessed materially, Judah holds messianic future
+
+**Gen 50 — Keystone**
+- "You meant evil, but God meant it for good" — *concursus* anchored here
+- Joseph's bones await exodus
+
 ### Exodus
 
 **Ex 1 — Pharaoh's oppression**
