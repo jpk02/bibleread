@@ -348,6 +348,37 @@ Local working file (not committed to public site if you'd prefer — let me know
 - Why does Pharaoh follow into the parted sea?
 - The crossing as Israel's "baptism" (chapter-specific angle on 1 Cor 10 already touched in Ex 2)
 
+**Ex 33 — Presence, glory, sovereign mercy**
+- Moses refusing to go on without God's presence — Immanuel as the actual covenant goal
+- "Show me your glory" — rock-cleft theophany; 1 Cor 10:4 Rock typology
+- "I will be gracious to whom I will be gracious" (33:19) — sovereign mercy as Rom 9 prooftext
+
+**Ex 34 — Divine self-revelation, covenant renewal**
+- "Merciful and gracious, slow to anger" (34:6-7) — the most-quoted divine self-description (Pss 86, 103, 145; Joel 2; Jonah 4; Neh 9; Num 14)
+- "Visiting iniquity to third and fourth generation" — consequence vs verdict; Ezek 18 individual responsibility; cross breaks the chain
+- Moses's shining face and the veil — 2 Cor 3 anchor (old glory fading, new glory increasing)
+
+**Ex 35 — Sabbath and Spirit-filled craft**
+- Sabbath repeated before tabernacle construction — worship not built by violating God's command; calf-rush vs tabernacle-pace
+- Bezalel filled with Spirit for craftsmanship (35:30-35) — first explicit Spirit-filling in Scripture; vocation in art/skill/manual work
+
+**Ex 36 — Restrained generosity**
+- People bringing too much — Moses has to stop them; grace-aware giving produces overflow not duty
+
+**Ex 37 — Pattern, not invention**
+- Why construction is re-narrated after the 25-31 blueprint — mirroring as obedience proof; tabernacle as creation echo; Heb 8:5 heavenly pattern
+
+**Ex 38 — Inventory and atonement**
+- Materials accounting and ministry transparency — silver from atonement census money holds up the sanctuary walls (substitutionary foundation)
+
+**Ex 39 — "As the LORD commanded"**
+- Sevenfold refrain — seven echoing creation week; Moses inspects and blesses (Gen 1 echo); creativity within prior word
+
+**Ex 40 — Glory fills the tabernacle**
+- *Kavod* descends — same glory in 1 Kgs 8 temple, John 1:14 incarnation, Pentecost, Rev 21
+- Moses cannot enter — old-covenant mediator excluded; Heb 9-10 says Christ opened the way; torn veil
+- Cloud by day, fire by night — guidance pattern, Acts 2 Pentecost echo
+
 ---
 
 ## Cross-References Heavily Used (use sparingly going forward)
