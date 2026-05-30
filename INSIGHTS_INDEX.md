@@ -216,6 +216,28 @@ Local working file (not committed to public site if you'd prefer — let me know
 - "You meant evil, but God meant it for good" — *concursus* anchored here
 - Joseph's bones await exodus
 
+### Colossians
+
+**Col 1 — Christ hymn, reconciliation, indwelling**
+- The Christ hymn (1:15-20) — cosmic Christology: image of invisible God, *prōtotokos* as rank not creation, creator + reconciler
+- "Reconcile all things" (1:20) — cosmic vs personal scope; not universalism (1:23 perseverance clause; willing vs subdued reconciliation)
+- "Christ in you, the hope of glory" (1:27) — indwelling Christ as anchor of resurrection guarantee; mystery now revealed to Gentiles
+
+**Col 2 — Heresy and the cross**
+- The Colossian heresy diagnosis (2:8, 16-23) — Jewish ritual + asceticism + angelology + Hellenistic philosophy, all = supplementing Christ
+- *Cheirographon* nailed to the cross (2:13-14) — IOU/legal-debt imagery; basis of "no condemnation"
+- Shadows vs substance (2:16-17) — Sabbaths/foods/festivals as anticipatory shapes; ceremonial vs moral law distinction; observance permitted, imposition forbidden
+
+**Col 3 — Heavenly identity and new clothing**
+- "Seek things above" (3:1-4) — bilocated identity, hidden-with-Christ life, eschatological unveiling
+- Put off / put on (3:5-14) — sanctification as exchange of garments; indicative-imperative dynamic; other-directed virtues with love as bond
+- Household codes (3:18-4:1) — *Haustafel* form Christianized; mutual obligation; Philemon as the bookend on slavery
+
+**Col 4 — Witness posture**
+- Speech seasoned with salt (4:5-6) — wisdom toward outsiders, redeeming time, individualized answers ("every man" singular)
+
+---
+
 ### Galatians
 
 **Gal 1 — Other gospel, Paul's authority**
