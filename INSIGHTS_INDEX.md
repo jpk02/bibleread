@@ -216,6 +216,37 @@ Local working file (not committed to public site if you'd prefer — let me know
 - "You meant evil, but God meant it for good" — *concursus* anchored here
 - Joseph's bones await exodus
 
+### Galatians
+
+**Gal 1 — Other gospel, Paul's authority**
+- Double anathema on any other gospel (1:8-9); no thanksgiving in opening
+- "Not from man" — autobiographical timeline establishing independent apostolic authority
+
+**Gal 2 — Antioch, union with Christ**
+- Public confrontation with Peter at Antioch (2:11-14) — when public correction is necessary
+- "Crucified with Christ" (2:20) — union with Christ as the structure of justification + sanctification
+- Titus as the test case (2:3-5) — refusing circumcision as a line in the sand
+
+**Gal 3 — Faith, curse, paidagogos**
+- "Who has bewitched you?" — Spirit-then-flesh as gospel reversal (3:1-3)
+- Christ became a curse (3:13, Deut 21:23 background) — substitutionary atonement at sharpest
+- Law as *paidagōgos* (3:24) — guardian until Christ, temporary by design
+
+**Gal 4 — Fullness of time, adoption, two covenants**
+- "Fullness of time" (4:4) — providential ripening of redemptive history
+- *Abba* / adoption (4:6) — Spirit of the Son cries Abba in the believer
+- Hagar/Sarah as **two covenants** (4:21-31) — Galatians-specific angle distinct from Gen 16's flesh-vs-promise anchor; reads present Jerusalem as Hagar
+
+**Gal 5 — Liberty and fruit**
+- "Fallen from grace" (5:4) — leaving grace-system for works-system, not losing salvation through sin
+- Singular *fruit* vs plural *works* (5:22-23) — fruit as organic whole, not buffet
+
+**Gal 6 — Burdens and new creation**
+- *Barē* vs *phortion* (6:2 vs 6:5) — crushing burdens shared, ordinary loads individual
+- New creation as the only true boast (6:14-15); marks of Jesus on Paul's body (6:17)
+
+---
+
 ### Exodus
 
 **Ex 1 — Pharaoh's oppression**
