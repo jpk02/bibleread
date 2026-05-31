@@ -1,0 +1,12 @@
+name = "krengbible"
+main = "index.js"
+compatibility_date = "2026-05-31"
+account_id = "a3c32a9275ac5df0061e7913f05ce6c5"
+
+# KV binding — dashboard name is BIBLE_COMMENTARY, code uses COMMENTARY_KV
+[[kv_namespaces]]
+binding = "COMMENTARY_KV"
+id = "5f36020ad8334b02ab9ffcdfa8788c63"
+
+# Secrets ESV_TOKEN, ANTHROPIC_KEY, ADMIN_SECRET are managed via
+# `wrangler secret put NAME` and persist across deploys — not declared here.

@@ -501,11 +501,24 @@ async function fetchChapterFromEsv(bookNum, chapter, env) {
     + '&include-short-copyright=false&include-passage-references=false'
     + '&indent-paragraphs=0&indent-poetry=false&include-chapter-numbers=false'
     + '&indent-psalm-doxology=false&line-length=0';
-  const resp = await fetch(esvUrl, { headers: { Authorization: 'Token ' + env.ESV_TOKEN } });
-  if (!resp.ok) throw new Error(`ESV ${resp.status} for ${q}`);
-  const data = await resp.json();
-  if (!data.passages || !data.passages[0]) throw new Error(`No passage for ${q}`);
-  return parseEsvPassageText(data.passages[0]);
+  // Retry on 429 with exponential backoff.  ESV is conservative on burst rate.
+  let lastErr = null;
+  for (let attempt = 0; attempt < 5; attempt++) {
+    const resp = await fetch(esvUrl, { headers: { Authorization: 'Token ' + env.ESV_TOKEN } });
+    if (resp.ok) {
+      const data = await resp.json();
+      if (!data.passages || !data.passages[0]) throw new Error(`No passage for ${q}`);
+      return parseEsvPassageText(data.passages[0]);
+    }
+    if (resp.status === 429) {
+      const wait = 500 * Math.pow(2, attempt); // 500ms, 1s, 2s, 4s, 8s
+      await new Promise(r => setTimeout(r, wait));
+      lastErr = `ESV 429 for ${q}`;
+      continue;
+    }
+    throw new Error(`ESV ${resp.status} for ${q}`);
+  }
+  throw new Error(lastErr || `ESV retries exhausted for ${q}`);
 }
 
 function enChapterToTuples(bookIdx, chapter, verses) {
@@ -524,7 +537,7 @@ async function handleBuildEnIndex(env, url, cors) {
   const from = Math.max(0, parseInt(url.searchParams.get('from') || '0'));
   const size = Math.min(400, Math.max(1, parseInt(url.searchParams.get('size') || '250')));
   const refetch = url.searchParams.get('refetch') === '1';
-  const concurrency = 8; // be polite to ESV API
+  const concurrency = 2; // be polite to ESV API — they rate-limit aggressively on burst
 
   const tuples = [];
   let fetched = 0, fromCache = 0, errored = 0;
