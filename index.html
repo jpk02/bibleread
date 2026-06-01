@@ -1920,6 +1920,17 @@ function notesJumpTo(bIdx,ch,id){
   updateLabel();
   load().then(function(){
     setTimeout(function(){
+      // Scroll the chapter view to the note's anchored verse BEFORE opening
+      // the notes panel — so when the user closes the panel, the chapter is
+      // already at the right place (matches hlJumpTo behaviour).
+      var noteData=notesLoad()[id];
+      if(noteData && typeof noteData.startVerse==='number'){
+        var row=document.getElementById('vr-'+noteData.startVerse);
+        var main=document.getElementById('main');
+        if(row && main){
+          main.scrollTop+=row.getBoundingClientRect().top-main.getBoundingClientRect().top-60;
+        }
+      }
       notesEditingId=null;
       notesPendingNew=null;
       notesOpen();
