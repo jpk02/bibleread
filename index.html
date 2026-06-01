@@ -875,6 +875,8 @@ function toggleLangOrder(btn){
   if(acctLabel)acctLabel.textContent=isEn?'Account / 계정':'계정 / Account';
   var authTitle=document.getElementById('auth-title');
   if(authTitle)authTitle.textContent=isEn?'Account / 계정':'계정 / Account';
+  // Refresh every other piece of text inside the Account modal.
+  if(typeof authApplyLang==='function') authApplyLang();
   var copyLabel=document.getElementById('hl-copy-label'); if(copyLabel)copyLabel.textContent=isEn?'Copy':'복사';
   var notesLabel=document.getElementById('hl-notes-label'); if(notesLabel)notesLabel.textContent=isEn?'Notes':'노트';
   var notesPane=document.getElementById('notes-modal');
@@ -7088,11 +7090,98 @@ function fbPushPosition(){
 }
 
 // ---------- Auth UI ----------
+// Bilingual text bank.  Primary-language-only for buttons/labels (short),
+// translated paragraphs for blurbs.
+var AUTH_TXT={
+  ko:{
+    blurb_signin:'모든 기기에서 하이라이트, 진도, 현재 챕터를 동기화하려면 로그인하세요 (웹 및 모바일 앱).',
+    blurb_signup:'모든 기기에서 데이터를 동기화하려면 계정을 만드세요.  기존 로컬 하이라이트와 진도가 업로드됩니다.',
+    blurb_reset:'이메일을 입력하시면 비밀번호 재설정 링크를 보내 드립니다.',
+    blurb_signedin:'하이라이트, 진도, 읽기 위치가 모든 기기에 자동으로 동기화됩니다.',
+    btn_signin:'로그인', btn_signup:'계정 만들기', btn_reset:'재설정 메일 보내기',
+    btn_working:'처리 중…',
+    btn_signout:'로그아웃', btn_delete:'계정 삭제', btn_resend:'인증 메일 다시 보내기',
+    label_email:'이메일', label_pwd:'비밀번호',
+    ph_email:'you@example.com', ph_pwd:'6자 이상',
+    link_reset:'비밀번호를 잊으셨나요?',
+    link_signup:'계정이 없으신가요?  만들기',
+    link_signin:'이미 계정이 있으신가요?  로그인',
+    link_back:'로그인으로 돌아가기',
+    status_verified:'로그인 및 인증 완료',
+    status_unverified:'이메일 미인증',
+    err_email_required:'이메일을 입력하세요.',
+    err_pwd_short:'비밀번호는 6자 이상이어야 합니다.',
+    err_fb_not_ready:'Firebase가 아직 로드되지 않았습니다 — 다시 시도하세요.',
+    info_reset_sent:'받은편지함에서 재설정 링크를 확인하세요.'
+  },
+  en:{
+    blurb_signin:'Sign in to sync highlights, progress, and your current chapter across all your devices (web and mobile app).',
+    blurb_signup:'Create an account to sync your data across devices.  Your existing local highlights and progress will be uploaded.',
+    blurb_reset:'Enter your email and we will send you a link to reset your password.',
+    blurb_signedin:'Your highlights, progress, and reading position sync to all your devices automatically.',
+    btn_signin:'Sign in', btn_signup:'Create account', btn_reset:'Send reset email',
+    btn_working:'Working…',
+    btn_signout:'Sign out', btn_delete:'Delete account', btn_resend:'Resend verification email',
+    label_email:'Email', label_pwd:'Password',
+    ph_email:'you@example.com', ph_pwd:'At least 6 characters',
+    link_reset:'Forgot password?',
+    link_signup:"Don't have an account?  Create one",
+    link_signin:'Already have an account?  Sign in',
+    link_back:'Back to sign in',
+    status_verified:'Signed in & verified',
+    status_unverified:'Email not verified',
+    err_email_required:'Email is required.',
+    err_pwd_short:'Password must be at least 6 characters.',
+    err_fb_not_ready:'Firebase not loaded yet — try again.',
+    info_reset_sent:'Check your inbox for a reset link.'
+  }
+};
+function authT(){ return AUTH_TXT[langOrder==='ko-en'?'ko':'en']; }
+
+// Apply current language to every static element in the auth modal +
+// re-set the mode-specific submit button + blurb based on _authMode.
+function authApplyLang(){
+  var t=authT();
+  var sb=document.getElementById('auth-submit-btn');
+  var blurb=document.getElementById('auth-blurb');
+  if(sb){
+    if(_authMode==='signin')      sb.textContent=t.btn_signin;
+    else if(_authMode==='signup') sb.textContent=t.btn_signup;
+    else if(_authMode==='reset')  sb.textContent=t.btn_reset;
+  }
+  if(blurb){
+    if(_authMode==='signin')      blurb.textContent=t.blurb_signin;
+    else if(_authMode==='signup') blurb.textContent=t.blurb_signup;
+    else if(_authMode==='reset')  blurb.textContent=t.blurb_reset;
+  }
+  var setText=function(id,v){var el=document.getElementById(id);if(el)el.textContent=v;};
+  var setPh=function(id,v){var el=document.getElementById(id);if(el)el.placeholder=v;};
+  setText('auth-pwd-label',t.label_pwd);
+  setPh('auth-email',t.ph_email);
+  setPh('auth-password',t.ph_pwd);
+  setText('auth-link-reset',t.link_reset);
+  setText('auth-link-signup',t.link_signup);
+  setText('auth-link-signin',t.link_signin);
+  setText('auth-link-back',t.link_back);
+  setText('auth-resend-btn',t.btn_resend);
+  setText('auth-signedin-blurb',t.blurb_signedin);
+  // Find by class for the email label (no id) and the signed-in row buttons.
+  var emailLabel=document.querySelector('#auth-form .auth-label:first-of-type');
+  if(emailLabel)emailLabel.textContent=t.label_email;
+  var signoutBtn=document.getElementById('auth-signout-btn');
+  if(signoutBtn)signoutBtn.textContent=t.btn_signout;
+  var deleteBtn=document.getElementById('auth-delete-btn');
+  if(deleteBtn)deleteBtn.textContent=t.btn_delete;
+  // Refresh signed-in status text in case language flipped while signed in.
+  if(typeof updateAuthUI==='function') updateAuthUI();
+}
+
 function updateAuthUI(){
   var user=window.fbCurrentUser;
   var so=document.getElementById('auth-signed-out');
   var si=document.getElementById('auth-signed-in');
   if(!so || !si) return;
+  var t=authT();
   if(user){
     so.style.display='none'; si.style.display='block';
     document.getElementById('auth-card-email').textContent=user.email||'';
@@ -7101,11 +7190,11 @@ function updateAuthUI(){
     var rb=document.getElementById('auth-resend-btn');
     if(user.emailVerified){
       dot.style.background='#16a34a';
-      txt.textContent='Signed in & verified';
+      txt.textContent=t.status_verified;
       if(rb) rb.style.display='none';
     } else {
       dot.style.background='#eab308';
-      txt.textContent='Email not verified';
+      txt.textContent=t.status_unverified;
       if(rb) rb.style.display='';
     }
   } else {
@@ -7128,57 +7217,55 @@ function authClose(){
 }
 function authShowSignIn(){
   _authMode='signin';
-  document.getElementById('auth-submit-btn').textContent='Sign in';
   document.getElementById('auth-pwd-label').style.display='';
   document.getElementById('auth-password').style.display='';
   document.getElementById('auth-link-reset').style.display='';
   document.getElementById('auth-link-signup').style.display='';
   document.getElementById('auth-link-signin').style.display='none';
   document.getElementById('auth-link-back').style.display='none';
-  document.getElementById('auth-blurb').textContent='Sign in to sync highlights, progress, and your current chapter across all your devices (web and mobile app).';
+  authApplyLang();
 }
 function authShowSignUp(){
   _authMode='signup';
-  document.getElementById('auth-submit-btn').textContent='Create account';
   document.getElementById('auth-pwd-label').style.display='';
   document.getElementById('auth-password').style.display='';
   document.getElementById('auth-link-reset').style.display='none';
   document.getElementById('auth-link-signup').style.display='none';
   document.getElementById('auth-link-signin').style.display='';
   document.getElementById('auth-link-back').style.display='none';
-  document.getElementById('auth-blurb').textContent='Create an account to sync your data across devices. Your existing local highlights and progress will be uploaded.';
+  authApplyLang();
 }
 function authShowReset(){
   _authMode='reset';
-  document.getElementById('auth-submit-btn').textContent='Send reset email';
   document.getElementById('auth-pwd-label').style.display='none';
   document.getElementById('auth-password').style.display='none';
   document.getElementById('auth-link-reset').style.display='none';
   document.getElementById('auth-link-signup').style.display='none';
   document.getElementById('auth-link-signin').style.display='none';
   document.getElementById('auth-link-back').style.display='';
-  document.getElementById('auth-blurb').textContent='Enter your email and we will send you a link to reset your password.';
+  authApplyLang();
 }
 
 function authSubmit(){
+  var t=authT();
   var email=document.getElementById('auth-email').value.trim();
   var pwd=document.getElementById('auth-password').value;
   var err=document.getElementById('auth-err');
   var info=document.getElementById('auth-info');
   err.textContent=''; info.textContent='';
-  if(!email){ err.textContent='Email is required.'; return; }
-  if(_authMode!=='reset' && pwd.length<6){ err.textContent='Password must be at least 6 characters.'; return; }
-  if(!window.fb){ err.textContent='Firebase not loaded yet — try again.'; return; }
+  if(!email){ err.textContent=t.err_email_required; return; }
+  if(_authMode!=='reset' && pwd.length<6){ err.textContent=t.err_pwd_short; return; }
+  if(!window.fb){ err.textContent=t.err_fb_not_ready; return; }
   var btn=document.getElementById('auth-submit-btn');
   btn.disabled=true;
-  var orig=btn.textContent; btn.textContent='Working…';
+  var orig=btn.textContent; btn.textContent=t.btn_working;
   var p;
   if(_authMode==='signin') p=window.fb.signIn(email,pwd);
   else if(_authMode==='signup') p=window.fb.signUp(email,pwd);
   else p=window.fb.resetPassword(email);
   p.then(function(){
     btn.disabled=false; btn.textContent=orig;
-    if(_authMode==='reset'){ info.textContent='Check your inbox for a reset link.'; }
+    if(_authMode==='reset'){ info.textContent=t.info_reset_sent; }
     else { /* auth state change will refresh UI */ }
   }).catch(function(e){
     btn.disabled=false; btn.textContent=orig;
@@ -7299,11 +7386,11 @@ window.authDoDelete=authDoDelete;
         </div>
         <button id="auth-resend-btn" class="auth-row-btn" style="width:100%;display:none;margin-top:8px" onclick="authResend()">Resend verification email</button>
         <div class="auth-row">
-          <button class="auth-row-btn" onclick="authDoSignOut()">Sign out</button>
-          <button class="auth-row-btn danger" onclick="authDoDelete()">Delete account</button>
+          <button id="auth-signout-btn" class="auth-row-btn" onclick="authDoSignOut()">Sign out</button>
+          <button id="auth-delete-btn" class="auth-row-btn danger" onclick="authDoDelete()">Delete account</button>
         </div>
       </div>
-      <div class="auth-blurb" style="font-size:12px;margin-top:8px">
+      <div id="auth-signedin-blurb" class="auth-blurb" style="font-size:12px;margin-top:8px">
         Your highlights, progress, and reading position sync to all your devices automatically.
       </div>
     </div>
