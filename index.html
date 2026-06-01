@@ -1282,7 +1282,9 @@ async function fetchKo(bk,ch){
 }
 async function fetchEsv(bk,ch){
   var esvQ=bk.en+' '+ch;if(bk.ch===1)esvQ=bk.en+' 1:1-999';
-  var r=await fetch(WORKER+'/esv/?q='+encodeURIComponent(esvQ));
+  // {cache:'no-store'} bypasses any stale browser cache from earlier deploys
+  // when the worker's /esv/ endpoint didn't yet send no-store headers.
+  var r=await fetch(WORKER+'/esv/?q='+encodeURIComponent(esvQ),{cache:'no-store'});
   if(!r.ok)throw new Error('ESV proxy error '+r.status);
   var d=await r.json();if(!d.passages||!d.passages[0])throw new Error('No ESV data');
   var txt=d.passages[0],verses={},footnotes={},aL=txt.split('\n'),pL=[],fL=[],inFn=false;
@@ -6247,10 +6249,10 @@ async function loadMoreResults(){
     var url,data;
     if(searchState.isKo){
       url=WORKER+'/search/ko?q='+encodeURIComponent(searchState.q)+'&offset='+searchState.nextOffset;
-      var r=await fetch(url);data=await r.json();
+      var r=await fetch(url,{cache:'no-store'});data=await r.json();
     } else {
       url=WORKER+'/search/en?q='+encodeURIComponent(searchState.q)+'&page='+searchState.nextPage;
-      var r=await fetch(url);data=await r.json();
+      var r=await fetch(url,{cache:'no-store'});data=await r.json();
     }
 
     // Remove loading spinner
